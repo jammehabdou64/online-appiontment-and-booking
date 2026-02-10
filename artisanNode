@@ -1,0 +1,5 @@
+import { ConsoleKernel } from "jcc-express-mvc/Core/Cli";
+import { app } from "./bootstrap/app";
+
+const consoleKernel = app.resolve<ConsoleKernel>("ConsoleKernel");
+consoleKernel.parse(process.argv);

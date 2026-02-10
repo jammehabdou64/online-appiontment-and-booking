@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/Models/*": ["./app/Models/*"],
+      "@/Models": ["./app/Models"],
+      "@Controllers/*": ["./app/Http/Controllers/*"],
+      "@/Requests/*": ["./app/Http/Requests/*"],
+      "@Providers/*": ["./app/Providers/*"],
+      "@/Services/*": ["./app/Services/*"],
+      "@/*": ["./resources/js/*"],
+      "app/*": ["./app/*"]
+    }
+  }
+}
