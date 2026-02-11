@@ -23,9 +23,7 @@ export default function EditService({ service }: EditServiceProps) {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Edit Service</h1>
-            <p className="text-muted-foreground mt-1">
-              Update service details
-            </p>
+            <p className="text-muted-foreground mt-1">Update service details</p>
           </div>
           <Link href="/services">
             <Button variant="outline">Cancel</Button>
@@ -37,4 +35,3 @@ export default function EditService({ service }: EditServiceProps) {
     </AdminLayout>
   );
 }
-

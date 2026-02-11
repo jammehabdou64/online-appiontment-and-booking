@@ -57,11 +57,8 @@ export class ServicesController {
 
   @Method()
   async edit(service: Service) {
-    const business = await service.business();
-
     return inertia("Services/Edit", {
       service,
-      business,
     });
   }
 

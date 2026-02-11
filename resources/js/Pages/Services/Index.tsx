@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { Head, Link, router } from "@inertiajs/react";
-import { Plus, Edit, Trash2, Clock, DollarSign, MoreHorizontal } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Clock,
+  DollarSign,
+  MoreHorizontal,
+} from "lucide-react";
 import AdminLayout from "@/Components/Admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
@@ -31,51 +38,18 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { toast } from "sonner";
 
-// Mock data - replace with real data from props
-const services = [
-  {
-    id: 1,
-    name: "Haircut & Styling",
-    duration: 60,
-    price: null,
-    active: true,
-  },
-  {
-    id: 2,
-    name: "Consultation",
-    duration: 30,
-    price: null,
-    active: true,
-  },
-  {
-    id: 3,
-    name: "Manicure",
-    duration: 45,
-    price: null,
-    active: true,
-  },
-  {
-    id: 4,
-    name: "Massage Therapy",
-    duration: 90,
-    price: null,
-    active: false,
-  },
-  {
-    id: 5,
-    name: "Facial Treatment",
-    duration: 75,
-    price: null,
-    active: true,
-  },
-  {
-    id: 6,
-    name: "Pedicure",
-    duration: 60,
-    price: null,
-    active: true,
-  },
-];
+interface Service {
+  id: number;
+  name: string;
+  duration: number;
+  price?: number | null;
+  active: boolean;
+  description?: string;
+}
+
+interface ServicesPageProps {
+  services: Service[];
+}
 
 const formatDuration = (minutes: number) => {
   const hours = Math.floor(minutes / 60);
@@ -86,7 +60,7 @@ const formatDuration = (minutes: number) => {
   return `${mins}m`;
 };
 
-export default function Services() {
+export default function Services({ services }: ServicesPageProps) {
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<{
     id: number;
@@ -104,7 +78,9 @@ export default function Services() {
         onSuccess: () => {
           setDeleteAlertOpen(false);
           setSelectedService(null);
-          toast.success(`Service "${selectedService.name}" deleted successfully`);
+          toast.success(
+            `Service "${selectedService.name}" deleted successfully`,
+          );
         },
         onError: () => {
           toast.error("Failed to delete service");
@@ -204,7 +180,9 @@ export default function Services() {
                             checked={service.active}
                             onCheckedChange={(checked) => {
                               // Handle toggle
-                              console.log(`Toggle service ${service.id} to ${checked}`);
+                              console.log(
+                                `Toggle service ${service.id} to ${checked}`,
+                              );
                             }}
                           />
                           <span className="text-sm text-muted-foreground">
@@ -266,4 +244,3 @@ export default function Services() {
     </AdminLayout>
   );
 }
-

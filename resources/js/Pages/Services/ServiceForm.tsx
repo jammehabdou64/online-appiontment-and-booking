@@ -1,6 +1,12 @@
 import React, { useEffect } from "react";
 import { useForm } from "@inertiajs/react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -12,7 +18,7 @@ interface ServiceFormProps {
   service?: {
     id: number;
     name: string;
-    duration: number;
+    duration_minutes: number;
     price?: number;
     active: boolean;
     description?: string;
@@ -20,10 +26,13 @@ interface ServiceFormProps {
   isEditing?: boolean;
 }
 
-export default function ServiceForm({ service, isEditing = false }: ServiceFormProps) {
+export default function ServiceForm({
+  service,
+  isEditing = false,
+}: ServiceFormProps) {
   const { data, setData, post, patch, processing, errors, reset } = useForm({
     name: service?.name || "",
-    duration: service?.duration?.toString() || "",
+    duration_minutes: service?.duration_minutes?.toString() || "",
     price: service?.price?.toString() || "",
     active: service?.active !== undefined ? service.active : true,
     description: service?.description || "",
@@ -34,7 +43,9 @@ export default function ServiceForm({ service, isEditing = false }: ServiceFormP
 
     const onSuccess = () => {
       toast.success(
-        isEditing ? "Service updated successfully" : "Service created successfully"
+        isEditing
+          ? "Service updated successfully"
+          : "Service created successfully",
       );
     };
 
@@ -88,13 +99,15 @@ export default function ServiceForm({ service, isEditing = false }: ServiceFormP
                 id="duration"
                 type="number"
                 min="1"
-                value={data.duration}
-                onChange={(e) => setData("duration", e.target.value)}
+                value={data.duration_minutes}
+                onChange={(e) => setData("duration_minutes", e.target.value)}
                 placeholder="60"
                 required
               />
-              {errors.duration && (
-                <p className="text-sm text-destructive">{errors.duration}</p>
+              {errors.duration_minutes && (
+                <p className="text-sm text-destructive">
+                  {errors.duration_minutes}
+                </p>
               )}
             </div>
 
@@ -154,8 +167,8 @@ export default function ServiceForm({ service, isEditing = false }: ServiceFormP
                   ? "Updating..."
                   : "Creating..."
                 : isEditing
-                ? "Update Service"
-                : "Create Service"}
+                  ? "Update Service"
+                  : "Create Service"}
             </Button>
           </div>
         </form>

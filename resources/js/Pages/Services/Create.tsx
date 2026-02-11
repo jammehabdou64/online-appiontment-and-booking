@@ -11,7 +11,9 @@ export default function CreateService() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Create Service</h1>
+            <h1 className="text-3xl font-bold text-foreground">
+              Create Service
+            </h1>
             <p className="text-muted-foreground mt-1">
               Add a new service to your offerings
             </p>
@@ -26,4 +28,3 @@ export default function CreateService() {
     </AdminLayout>
   );
 }
-
