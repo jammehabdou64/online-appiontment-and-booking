@@ -20,7 +20,7 @@ import { Button } from "@/Components/ui/button";
 import { Separator } from "@/Components/ui/separator";
 import { ThemeToggle } from "@/Components/ThemeToggle";
 import { Badge } from "@/Components/ui/badge";
-
+import { Toaster } from "@/Components/ui/sonner";
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
@@ -60,7 +60,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   // Get current page title from nav items
   const getPageTitle = () => {
     const currentItem = navItems.find(
-      (item) => currentPath === item.href || currentPath.startsWith(item.href + "/")
+      (item) =>
+        currentPath === item.href || currentPath.startsWith(item.href + "/"),
     );
     return currentItem?.name || "Dashboard";
   };
@@ -72,15 +73,19 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         className={cn(
           "fixed inset-y-0 left-0 z-50 w-64 transition-transform duration-300 ease-in-out lg:translate-x-0",
           "bg-[hsl(var(--sidebar-background))] border-r border-[hsl(var(--sidebar-border))]",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
       >
         <div className="flex h-full flex-col">
           {/* Logo/Brand */}
           <div className="flex h-16 items-center justify-between border-b border-[hsl(var(--sidebar-border))] px-6">
             <div>
-              <h2 className="text-xl font-bold text-[hsl(var(--sidebar-foreground))]">BookEasy</h2>
-              <p className="text-xs text-[hsl(var(--sidebar-foreground))]/70">Admin Panel</p>
+              <h2 className="text-xl font-bold text-[hsl(var(--sidebar-foreground))]">
+                BookEasy
+              </h2>
+              <p className="text-xs text-[hsl(var(--sidebar-foreground))]/70">
+                Admin Panel
+              </p>
             </div>
             <Button
               variant="ghost"
@@ -99,8 +104,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </p>
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = currentPath === item.href || currentPath.startsWith(item.href + "/");
-              
+              const isActive =
+                currentPath === item.href ||
+                currentPath.startsWith(item.href + "/");
+
               return (
                 <Link
                   key={item.name}
@@ -109,7 +116,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
                       ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-[hsl(var(--sidebar-foreground))]/80 hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-accent-foreground))]"
+                      : "text-[hsl(var(--sidebar-foreground))]/80 hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-accent-foreground))]",
                   )}
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -180,9 +187,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   <p className="text-sm font-medium text-foreground">
                     {businessName}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {userEmail}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{userEmail}</p>
                 </div>
               </div>
             </div>
@@ -190,11 +195,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6">{children}</main>
+        <Toaster
+          position="top-right"
+          toastOptions={{ duration: 4000 }}
+          richColors
+        />
       </div>
     </div>
   );
 }
-

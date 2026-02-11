@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import { Plus, Eye, Edit, X, Calendar } from "lucide-react";
+import { Plus, Eye, Edit, X, Calendar, MoreHorizontal } from "lucide-react";
 import AdminLayout from "@/Components/Admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
@@ -19,7 +19,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
-import { DeleteModal } from "@/Components/DeleteModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 
 interface Appointment {
   id: number;
@@ -66,41 +74,43 @@ const getStatusBadge = (status: string) => {
 
 export default function Appointments({ appointments, filters }: Props) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<number | null>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<number | null>(
+    null,
+  );
 
   const appointmentList = appointments?.data || appointments || [];
-  
+
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
-    const dateStr = date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
+    const dateStr = date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
-    const timeStr = date.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true 
+    const timeStr = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
     return { date: dateStr, time: timeStr };
   };
 
   const getCustomerName = (appointment: Appointment) => {
-    if (appointment.customer) {
+    if (appointment?.customer) {
       return `${appointment.customer.first_name} ${appointment.customer.last_name}`;
     }
-    return 'Unknown Customer';
+    return "Unknown Customer";
   };
 
   const getServiceName = (appointment: Appointment) => {
-    return appointment.service?.name || 'Unknown Service';
+    return appointment?.service?.name || "Unknown Service";
   };
 
   const getStaffName = (appointment: Appointment) => {
-    if (appointment.staff) {
+    if (appointment?.staff) {
       return `${appointment.staff.first_name} ${appointment.staff.last_name}`;
     }
-    return 'Unassigned';
+    return "Unassigned";
   };
 
   const handleDeleteClick = (id: number) => {
@@ -122,14 +132,35 @@ export default function Appointments({ appointments, filters }: Props) {
   return (
     <AdminLayout>
       <Head title="Appointments" />
-      <DeleteModal
-        open={deleteModalOpen}
-        onOpenChange={setDeleteModalOpen}
-        onConfirm={handleDeleteConfirm}
-        title="Delete Appointment"
-        description="Are you sure you want to delete this appointment?"
-        itemName={selectedAppointment ? getCustomerName(appointmentList.find((a: Appointment) => a.id === selectedAppointment) as Appointment) : undefined}
-      />
+      <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Appointment</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this appointment for{" "}
+              <span className="font-medium text-foreground">
+                {selectedAppointment
+                  ? getCustomerName(
+                      appointmentList.find(
+                        (a: Appointment) => a.id === selectedAppointment,
+                      ) as Appointment,
+                    )
+                  : ""}
+              </span>
+              ? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-end gap-2">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
       <div className="space-y-6">
         {/* Page Header */}
         <div className="flex items-center justify-between">
@@ -167,7 +198,9 @@ export default function Appointments({ appointments, filters }: Props) {
                 </TableHeader>
                 <TableBody>
                   {appointmentList.map((appointment: Appointment) => {
-                    const { date, time } = formatDateTime(appointment.start_time);
+                    const { date, time } = formatDateTime(
+                      appointment.start_time,
+                    );
                     return (
                       <TableRow key={appointment.id}>
                         <TableCell className="font-medium">
@@ -183,12 +216,14 @@ export default function Appointments({ appointments, filters }: Props) {
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>{getStatusBadge(appointment.status)}</TableCell>
+                        <TableCell>
+                          {getStatusBadge(appointment.status)}
+                        </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="sm">
-                                Actions
+                                <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
@@ -212,7 +247,9 @@ export default function Appointments({ appointments, filters }: Props) {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="text-destructive"
-                                onClick={() => handleDeleteClick(appointment.id)}
+                                onClick={() =>
+                                  handleDeleteClick(appointment.id)
+                                }
                               >
                                 <X className="h-4 w-4 mr-2" />
                                 Delete
@@ -220,7 +257,7 @@ export default function Appointments({ appointments, filters }: Props) {
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
-                    </TableRow>
+                      </TableRow>
                     );
                   })}
                 </TableBody>
@@ -246,4 +283,3 @@ export default function Appointments({ appointments, filters }: Props) {
     </AdminLayout>
   );
 }
-
