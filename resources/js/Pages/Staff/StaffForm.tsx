@@ -1,6 +1,12 @@
 import React from "react";
 import { useForm, Link } from "@inertiajs/react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -23,7 +29,10 @@ interface StaffFormProps {
   isEditing?: boolean;
 }
 
-export default function StaffForm({ staff, isEditing = false }: StaffFormProps) {
+export default function StaffForm({
+  staff,
+  isEditing = false,
+}: StaffFormProps) {
   const { data, setData, post, patch, processing, errors } = useForm({
     first_name: staff?.first_name || "",
     last_name: staff?.last_name || "",
@@ -39,7 +48,9 @@ export default function StaffForm({ staff, isEditing = false }: StaffFormProps) 
 
     const onSuccess = () => {
       toast.success(
-        isEditing ? "Staff member updated successfully" : "Staff member created successfully"
+        isEditing
+          ? "Staff member updated successfully"
+          : "Staff member created successfully",
       );
     };
 
@@ -184,8 +195,8 @@ export default function StaffForm({ staff, isEditing = false }: StaffFormProps) 
                   ? "Updating..."
                   : "Creating..."
                 : isEditing
-                ? "Update Staff Member"
-                : "Add Staff Member"}
+                  ? "Update Staff Member"
+                  : "Add Staff Member"}
             </Button>
           </div>
         </form>

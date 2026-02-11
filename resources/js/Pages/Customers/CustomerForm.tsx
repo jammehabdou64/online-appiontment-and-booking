@@ -1,6 +1,12 @@
 import React from "react";
 import { useForm, Link } from "@inertiajs/react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -20,7 +26,10 @@ interface CustomerFormProps {
   isEditing?: boolean;
 }
 
-export default function CustomerForm({ customer, isEditing = false }: CustomerFormProps) {
+export default function CustomerForm({
+  customer,
+  isEditing = false,
+}: CustomerFormProps) {
   const { data, setData, post, patch, processing, errors } = useForm({
     first_name: customer?.first_name || "",
     last_name: customer?.last_name || "",
@@ -34,7 +43,9 @@ export default function CustomerForm({ customer, isEditing = false }: CustomerFo
 
     const onSuccess = () => {
       toast.success(
-        isEditing ? "Customer updated successfully" : "Customer created successfully"
+        isEditing
+          ? "Customer updated successfully"
+          : "Customer created successfully",
       );
     };
 
@@ -154,8 +165,8 @@ export default function CustomerForm({ customer, isEditing = false }: CustomerFo
                   ? "Updating..."
                   : "Creating..."
                 : isEditing
-                ? "Update Customer"
-                : "Add Customer"}
+                  ? "Update Customer"
+                  : "Add Customer"}
             </Button>
           </div>
         </form>
