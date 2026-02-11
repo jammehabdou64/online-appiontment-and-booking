@@ -48,7 +48,13 @@ interface Service {
 }
 
 interface ServicesPageProps {
-  services: Service[];
+  services: {
+    data: Service[];
+    current_page: number;
+    per_page: number;
+    total: number;
+    last_page: number;
+  };
 }
 
 const formatDuration = (minutes: number) => {
@@ -139,7 +145,7 @@ export default function Services({ services }: ServicesPageProps) {
             <CardTitle>All Services</CardTitle>
           </CardHeader>
           <CardContent>
-            {services.length > 0 ? (
+            {services?.data && services.data.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -151,7 +157,7 @@ export default function Services({ services }: ServicesPageProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {services.map((service) => (
+                  {services.data.map((service) => (
                     <TableRow key={service.id}>
                       <TableCell className="font-medium">
                         {service.name}

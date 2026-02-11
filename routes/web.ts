@@ -66,6 +66,7 @@ Route.group(() => {
       Route.get("/{service}", "show");
       Route.get("/{service}/edit", "edit");
       Route.put("/{service}", "update");
+      Route.patch("/{service}", "update");
       Route.delete("/{service}", "destroy");
     });
 

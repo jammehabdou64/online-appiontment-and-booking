@@ -65,28 +65,26 @@ export class ServicesController {
   /**
    * Update the specified service
    */
-  async update(
-    service: Service,
-    request: ServiceRequest,
-    { req, res } = httpContext,
-  ) {
-    await request.rules();
-    const validated = req.body;
 
-    await service.update(validated);
+  @Method()
+  async update(request: ServiceRequest) {
+    const service = await request.save();
 
-    return res
-      .with("success", "Service updated successfully!")
-      .inertiaRedirect(`/services/${(service as any).id}`);
+    return service
+      ? response()
+          .with("success", "Service updated successfully!")
+          .inertiaRedirect(`/services`)
+      : response().with("error", "Failed to update service!").redirectBack();
   }
 
   /**
    * Remove the specified service
    */
-  async destroy(service: Service, { res } = httpContext) {
+  @Method()
+  async destroy(service: Service) {
     await service.delete();
 
-    return res
+    return response()
       .with("success", "Service deleted successfully!")
       .inertiaRedirect("/services");
   }
