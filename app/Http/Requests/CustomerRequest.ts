@@ -9,7 +9,7 @@ export class CustomerRequest extends FormRequest {
   }
 
   async rules() {
-    const isUpdate = this.route("customer") || this.input("id");
+    const isUpdate = !!this.route("customer");
     
     await this.validate({
       business_id: isUpdate 

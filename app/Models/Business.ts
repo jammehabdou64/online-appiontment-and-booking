@@ -41,6 +41,10 @@ export class Business extends Model {
   businessUsers() {
     return this.hasMany(BusinessUser);
   }
-}
 
-     
+  static booted(): void {
+    this.creating((business) => {
+      business.slug = str().slug(business.name, true);
+    });
+  }
+}

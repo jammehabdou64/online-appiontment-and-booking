@@ -9,7 +9,7 @@ export class StaffRequest extends FormRequest {
   }
 
   async rules() {
-    const isUpdate = this.route("staff") || this.input("id");
+    const isUpdate = !!this.route("staff");
     
     await this.validate({
       business_id: isUpdate 

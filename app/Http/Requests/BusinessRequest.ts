@@ -9,12 +9,11 @@ export class BusinessRequest extends FormRequest {
   }
 
   async rules() {
-    const isUpdate = this.route("business") || this.input("id");
+    const isUpdate = !!this.route("business");
     
     await this.validate({
-      name: isUpdate ? ["sometimes", "string", "max:255"] : ["required", "string", "max:255"],
-      slug: isUpdate 
-        ? ["sometimes", "string", "max:255"]
+      name: ["required", "string", "max:255"],
+      
         : ["required", "string", "max:255", "unique:businesses,slug"],
       primary_phone: isUpdate ? ["sometimes", "string", "max:20"] : ["required", "string", "max:20"],
       secondary_phone: ["nullable", "string", "max:20"],
