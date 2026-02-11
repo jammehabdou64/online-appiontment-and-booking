@@ -10,12 +10,12 @@ export class BusinessRequest extends FormRequest {
 
   async rules() {
     const isUpdate = !!this.route("business");
-    
+
     await this.validate({
       name: ["required", "string", "max:255"],
-      
-        : ["required", "string", "max:255", "unique:businesses,slug"],
-      primary_phone: isUpdate ? ["sometimes", "string", "max:20"] : ["required", "string", "max:20"],
+      primary_phone: isUpdate
+        ? ["sometimes", "string", "max:20"]
+        : ["required", "string", "max:20"],
       secondary_phone: ["nullable", "string", "max:20"],
       address: ["nullable", "string", "max:500"],
       email: isUpdate
@@ -51,4 +51,3 @@ export class BusinessRequest extends FormRequest {
     return await business.save();
   }
 }
-

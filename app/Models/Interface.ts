@@ -44,6 +44,8 @@ export interface CustomerInterface extends Customer {
   last_name: string;
   email: string;
   phone: string;
+  notes?: string;
+  user_id?: string;
 }
 
 export interface BusinessInterface extends Business {
@@ -51,4 +53,14 @@ export interface BusinessInterface extends Business {
   address: string;
   phone: string;
   email: string;
+  slug: string;
+  primary_phone: string | number;
+  secondary_phone?: string | number;
+
+  website?: string;
+  logo?: string;
+  currency?: string;
+  language?: string;
+  timezone?: string;
+  is_active?: boolean | string;
 }

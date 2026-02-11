@@ -9,17 +9,13 @@ export class CustomerRequest extends FormRequest {
   }
 
   async rules() {
-    const isUpdate = !!this.route("customer");
-    
     await this.validate({
-      business_id: isUpdate 
-        ? ["sometimes", "integer", "exists:businesses,id"]
-        : ["required", "integer", "exists:businesses,id"],
+      business_id: ["required", "integer", "exists:businesses,id"],
       user_id: ["nullable", "integer", "exists:users,id"],
-      first_name: isUpdate ? ["sometimes", "string", "max:255"] : ["required", "string", "max:255"],
-      last_name: isUpdate ? ["sometimes", "string", "max:255"] : ["required", "string", "max:255"],
+      first_name: ["required", "string", "max:255"],
+      last_name: ["required", "string", "max:255"],
       email: ["nullable", "email", "max:255"],
-      phone: isUpdate ? ["sometimes", "string", "max:20"] : ["required", "string", "max:20"],
+      phone: ["required", "string", "max:20"],
       notes: ["nullable", "string"],
     });
   }
@@ -30,7 +26,7 @@ export class CustomerRequest extends FormRequest {
       : (new Customer() as CustomerInterface);
 
     customer.business_id = this.input("business_id");
-    customer.user_id = this.input("user_id");
+    customer.user_id = auth()?.id;
     customer.first_name = this.input("first_name");
     customer.last_name = this.input("last_name");
     customer.email = this.input("email");
@@ -40,4 +36,3 @@ export class CustomerRequest extends FormRequest {
     return await customer.save();
   }
 }
-
