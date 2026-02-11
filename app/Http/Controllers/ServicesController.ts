@@ -73,8 +73,9 @@ export class ServicesController {
     return service
       ? response()
           .with("success", "Service updated successfully!")
-          .inertiaRedirect(`/services`)
-      : response().with("error", "Failed to update service!").redirectBack();
+          .redirect(303, `/services`)
+      : //
+        response().with("error", "Failed to update service!").redirectBack();
   }
 
   /**
@@ -86,6 +87,6 @@ export class ServicesController {
 
     return response()
       .with("success", "Service deleted successfully!")
-      .inertiaRedirect("/services");
+      .redirect(303, `/services`);
   }
 }
