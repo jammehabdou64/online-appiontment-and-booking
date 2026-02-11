@@ -9,15 +9,11 @@ export class StaffRequest extends FormRequest {
   }
 
   async rules() {
-    const isUpdate = !!this.route("staff");
-    
     await this.validate({
-      business_id: isUpdate 
-        ? ["sometimes", "integer", "exists:businesses,id"]
-        : ["required", "integer", "exists:businesses,id"],
+      business_id: ["required", "integer", "exists:businesses,id"],
       user_id: ["nullable", "integer", "exists:users,id"],
-      first_name: isUpdate ? ["sometimes", "string", "max:255"] : ["required", "string", "max:255"],
-      last_name: isUpdate ? ["sometimes", "string", "max:255"] : ["required", "string", "max:255"],
+      first_name: ["required", "string", "max:255"],
+      last_name: ["required", "string", "max:255"],
       email: ["nullable", "email", "max:255"],
       phone: ["nullable", "string", "max:20"],
       avatar: ["nullable", "string", "max:255"],
@@ -44,4 +40,3 @@ export class StaffRequest extends FormRequest {
     return await staff.save();
   }
 }
-

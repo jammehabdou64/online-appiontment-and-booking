@@ -1,46 +1,10 @@
-import React, { useState } from "react";
-import { Head, useForm, Link } from "@inertiajs/react";
+import React from "react";
+import { Head, Link } from "@inertiajs/react";
 import AdminLayout from "@/Components/Admin/AdminLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
-import { Switch } from "@/Components/ui/switch";
-import { Badge } from "@/Components/ui/badge";
-import { X } from "lucide-react";
+import StaffForm from "./StaffForm";
 
 export default function CreateStaff() {
-  const [selectedServices, setSelectedServices] = useState<number[]>([]);
-  
-  const { data, setData, post, processing, errors } = useForm({
-    name: "",
-    email: "",
-    phone: "",
-    active: true,
-    service_ids: [] as number[],
-  });
-
-  // Mock services - replace with real data from props
-  const availableServices = [
-    { id: 1, name: "Haircut & Styling" },
-    { id: 2, name: "Consultation" },
-    { id: 3, name: "Manicure" },
-    { id: 4, name: "Massage Therapy" },
-  ];
-
-  const toggleService = (serviceId: number) => {
-    const newServices = selectedServices.includes(serviceId)
-      ? selectedServices.filter((id) => id !== serviceId)
-      : [...selectedServices, serviceId];
-    setSelectedServices(newServices);
-    setData("service_ids", newServices);
-  };
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    post("/staff");
-  };
-
   return (
     <AdminLayout>
       <Head title="Add Staff Member" />
@@ -57,29 +21,11 @@ export default function CreateStaff() {
           </Link>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Staff Member Details</CardTitle>
-            <CardDescription>
-              Fill in the information to add a new staff member
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={submit} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name *</Label>
-                  <Input
-                    id="name"
-                    value={data.name}
-                    onChange={(e) => setData("name", e.target.value)}
-                    placeholder="John Doe"
-                    required
-                  />
-                  {errors.name && (
-                    <p className="text-sm text-destructive">{errors.name}</p>
-                  )}
-                </div>
+        <StaffForm isEditing={false} />
+      </div>
+    </AdminLayout>
+  );
+}
 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email *</Label>

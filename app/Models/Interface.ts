@@ -36,6 +36,9 @@ export interface StaffInterface extends Staff {
   email: string;
   phone: string;
   is_active: boolean;
+  avatar?: string;
+  bio?: string;
+  user_id?: string;
 }
 
 export interface CustomerInterface extends Customer {

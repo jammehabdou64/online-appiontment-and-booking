@@ -8,11 +8,10 @@ export class BusinessesController {
   /**
    * Display a listing of businesses
    */
-  @Method()
-  async index({ req, res, next } = httpContext) {
+  async index() {
     const businesses = await Business.all();
 
-    return res.inertia("Businesses/Index", {
+    return inertia("Businesses/Index", {
       businesses,
     });
   }
@@ -20,32 +19,29 @@ export class BusinessesController {
   /**
    * Show the form for creating a new business
    */
-  async create({ req, res, next } = httpContext) {
-    return res.inertia("Businesses/Create");
+  async create() {
+    return inertia("Businesses/Create");
   }
 
   /**
    * Store a newly created business
    */
-  async store(
-    { req, res, next } = httpContext,
-    request: BusinessRequest
-  ) {
-    await request.rules();
-    const validated = req.body;
+  async store(request: BusinessRequest) {
+    const business = await request.save();
 
-    const business = await Business.create(validated);
-
-    return res
-      .with("success", "Business created successfully!")
-      .inertiaRedirect(`/businesses/${(business as any).id}`);
+    return business
+      ? response()
+          .with("success", "Business created successfully!")
+          .redirect(303, `/businesses`)
+      : response().with("error", "Failed to create business!").redirectBack();
   }
 
   /**
    * Display the specified business
    */
-  async show(business: Business, { res } = httpContext) {
-    return res.inertia("Businesses/Show", {
+  @Method()
+  async show(business: Business) {
+    return inertia("Businesses/Show", {
       business,
     });
   }
@@ -53,8 +49,9 @@ export class BusinessesController {
   /**
    * Show the form for editing the specified business
    */
-  async edit(business: Business, { res } = httpContext) {
-    return res.inertia("Businesses/Edit", {
+  @Method()
+  async edit(business: Business) {
+    return inertia("Businesses/Edit", {
       business,
     });
   }
@@ -62,30 +59,26 @@ export class BusinessesController {
   /**
    * Update the specified business
    */
-  async update(
-    business: Business,
-    request: BusinessRequest,
-    { req, res } = httpContext
-  ) {
-    await request.rules();
-    const validated = req.body;
+  @Method()
+  async update(request: BusinessRequest) {
+    const business = await request.save();
 
-    await business.update(validated);
-
-    return res
-      .with("success", "Business updated successfully!")
-      .inertiaRedirect(`/businesses/${(business as any).id}`);
+    return business
+      ? response()
+          .with("success", "Business updated successfully!")
+          .redirect(303, `/businesses}`)
+      : response().with("error", "Failed to update business!").redirectBack();
   }
 
   /**
    * Remove the specified business
    */
-  async destroy(business: Business, { res } = httpContext) {
+  @Method()
+  async destroy(business: Business) {
     await business.delete();
 
-    return res
+    return response()
       .with("success", "Business deleted successfully!")
-      .inertiaRedirect("/businesses");
+      .redirect(303, "/businesses");
   }
 }
-     
