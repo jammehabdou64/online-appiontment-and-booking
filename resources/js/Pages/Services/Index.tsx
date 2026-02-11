@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Head, Link, router } from "@inertiajs/react";
-import { Plus, Edit, Trash2, Clock, DollarSign } from "lucide-react";
+import { Plus, Edit, Trash2, Clock, DollarSign, MoreHorizontal } from "lucide-react";
 import AdminLayout from "@/Components/Admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
@@ -14,7 +14,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/Components/ui/table";
-import { DeleteModal } from "@/Components/DeleteModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
+import { toast } from "sonner";
 
 // Mock data - replace with real data from props
 const services = [
@@ -72,20 +87,27 @@ const formatDuration = (minutes: number) => {
 };
 
 export default function Services() {
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState<number | null>(null);
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
 
-  const handleDeleteClick = (id: number) => {
-    setSelectedService(id);
-    setDeleteModalOpen(true);
+  const handleDeleteClick = (service: { id: number; name: string }) => {
+    setSelectedService(service);
+    setDeleteAlertOpen(true);
   };
 
   const handleDeleteConfirm = () => {
     if (selectedService) {
-      router.delete(`/services/${selectedService}`, {
+      router.delete(`/services/${selectedService.id}`, {
         onSuccess: () => {
-          setDeleteModalOpen(false);
+          setDeleteAlertOpen(false);
           setSelectedService(null);
+          toast.success(`Service "${selectedService.name}" deleted successfully`);
+        },
+        onError: () => {
+          toast.error("Failed to delete service");
         },
       });
     }
@@ -94,14 +116,30 @@ export default function Services() {
   return (
     <AdminLayout>
       <Head title="Services" />
-      <DeleteModal
-        open={deleteModalOpen}
-        onOpenChange={setDeleteModalOpen}
-        onConfirm={handleDeleteConfirm}
-        title="Delete Service"
-        description="Are you sure you want to delete this service?"
-        itemName={selectedService ? services.find(s => s.id === selectedService)?.name : undefined}
-      />
+      <AlertDialog open={deleteAlertOpen} onOpenChange={setDeleteAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Service</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete{" "}
+              <span className="font-semibold text-foreground">
+                "{selectedService?.name}"
+              </span>
+              ? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-end gap-2">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="space-y-6">
         {/* Page Header */}
         <div className="flex items-center justify-between">
@@ -175,21 +213,33 @@ export default function Services() {
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Link href={`/services/${service.id}/edit`}>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
-                              <Edit className="h-4 w-4" />
+                              <MoreHorizontal className="h-4 w-4" />
                             </Button>
-                          </Link>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-destructive"
-                            onClick={() => handleDeleteClick(service.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild>
+                              <Link href={`/services/${service.id}/edit`}>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleDeleteClick({
+                                  id: service.id,
+                                  name: service.name,
+                                })
+                              }
+                              className="text-destructive focus:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}

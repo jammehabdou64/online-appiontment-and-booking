@@ -9,61 +9,43 @@ export class ServicesController {
   /**
    * Display a listing of services
    */
-  @Method()
-  async index({ req, res, next } = httpContext) {
-    const businessId = req.query.business_id || req.params.business_id;
-
-    let query = Service.query();
-
-    if (businessId) {
-      query = query.where("business_id", businessId);
-    }
-
-    const services = await query.get();
-    const business = businessId ? await Business.find(businessId as string) : null;
-
-    return res.inertia("Services/Index", {
-      services,
-      business,
+  async index() {
+    return inertia("Services/Index", {
+      services: await Service.with(["business"]).paginate(request()),
+      business: {},
     });
   }
 
   /**
    * Show the form for creating a new service
    */
-  async create({ req, res, next } = httpContext) {
-    const businessId = req.query.business_id || req.params.business_id;
-    const business = businessId ? await Business.find(businessId as string) : null;
-
-    return res.inertia("Services/Create", {
-      business,
-    });
+  async create() {
+    return inertia("Services/Create", {});
   }
 
   /**
    * Store a newly created service
    */
-  async store(
-    { req, res, next } = httpContext,
-    request: ServiceRequest
-  ) {
-    await request.rules();
-    const validated = req.body;
+  @Method()
+  async store(request: ServiceRequest) {
+    const service = await request.save();
 
-    const service = await Service.create(validated);
-
-    return res
-      .with("success", "Service created successfully!")
-      .inertiaRedirect(`/services/${(service as any).id}`);
+    return service
+      ? response()
+          .with("success", "Service created successfully!")
+          .redirect(`/services`)
+      : //
+        response().with("error", "Failed to create service!").redirectBack();
   }
 
   /**
    * Display the specified service
    */
-  async show(service: Service, { res } = httpContext) {
+  @Method()
+  async show(service: Service) {
     const business = await service.business();
 
-    return res.inertia("Services/Show", {
+    return inertia("Services/Show", {
       service,
       business,
     });
@@ -72,10 +54,12 @@ export class ServicesController {
   /**
    * Show the form for editing the specified service
    */
-  async edit(service: Service, { res } = httpContext) {
+
+  @Method()
+  async edit(service: Service) {
     const business = await service.business();
 
-    return res.inertia("Services/Edit", {
+    return inertia("Services/Edit", {
       service,
       business,
     });
@@ -87,7 +71,7 @@ export class ServicesController {
   async update(
     service: Service,
     request: ServiceRequest,
-    { req, res } = httpContext
+    { req, res } = httpContext,
   ) {
     await request.rules();
     const validated = req.body;
@@ -110,4 +94,3 @@ export class ServicesController {
       .inertiaRedirect("/services");
   }
 }
-     
