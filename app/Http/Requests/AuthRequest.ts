@@ -9,7 +9,6 @@ export class AuthRequest extends FormRequest {
 
   async rules() {
     await this.validate({
-      //
       name: ["required"],
       email: ["required", "unique:users"],
       password: ["required", "min:6", "same:confirmPassword"],

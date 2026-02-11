@@ -1,5 +1,7 @@
 import { FormRequest } from "jcc-express-mvc/Core/FormRequest";
 import { Request } from "jcc-express-mvc";
+import { Staff } from "@/Models/Staff";
+import { StaffInterface } from "@/Models/Interface";
 
 export class StaffRequest extends FormRequest {
   constructor(req: Request) {
@@ -7,7 +9,7 @@ export class StaffRequest extends FormRequest {
   }
 
   async rules() {
-    const isUpdate = this.req.params?.id || this.input("id");
+    const isUpdate = this.route("staff") || this.input("id");
     
     await this.validate({
       business_id: isUpdate 
@@ -22,6 +24,24 @@ export class StaffRequest extends FormRequest {
       bio: ["nullable", "string"],
       is_active: ["nullable", "boolean"],
     });
+  }
+
+  async save() {
+    const staff = this.route("staff")
+      ? ((await Staff.find(this.route("staff"))) as StaffInterface)
+      : (new Staff() as StaffInterface);
+
+    staff.business_id = this.input("business_id");
+    staff.user_id = this.input("user_id");
+    staff.first_name = this.input("first_name");
+    staff.last_name = this.input("last_name");
+    staff.email = this.input("email");
+    staff.phone = this.input("phone");
+    staff.avatar = this.input("avatar");
+    staff.bio = this.input("bio");
+    staff.is_active = this.input("is_active") ?? true;
+
+    return await staff.save();
   }
 }
 
