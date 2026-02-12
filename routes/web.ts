@@ -80,6 +80,7 @@ Route.group(() => {
       Route.get("/{staff}", "show");
       Route.get("/{staff}/edit", "edit");
       Route.put("/{staff}", "update");
+      Route.patch("/{staff}", "update");
       Route.delete("/{staff}", "destroy");
     });
 

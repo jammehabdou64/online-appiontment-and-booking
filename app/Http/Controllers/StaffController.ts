@@ -18,87 +18,75 @@ export class StaffController {
   /**
    * Show the form for creating a new staff member
    */
-  async create({ req, res, next } = httpContext) {
-    const businessId = req.query.business_id || req.params.business_id;
-    const business = businessId
-      ? await Business.find(businessId as string)
-      : null;
-
-    return res.inertia("Staff/Create", {
-      business,
-    });
+  async create() {
+    return inertia("Staff/Create");
   }
 
   /**
    * Store a newly created staff member
    */
-  async store({ req, res, next } = httpContext, request: StaffRequest) {
-    await request.rules();
-    const validated = req.body;
+  @Method()
+  async store(request: StaffRequest) {
+    const staff = await request.save();
 
-    const staff = await Staff.create(validated);
-
-    return res
-      .with("success", "Staff member created successfully!")
-      .inertiaRedirect(`/staff/${(staff as any).id}`);
+    return staff
+      ? response()
+          .with("success", "Staff member created successfully!")
+          .redirect(303, `/staff`)
+      : response()
+          .with("error", "Failed to create staff member!")
+          .redirectBack();
   }
 
   /**
    * Display the specified staff member
    */
-  async show(staff: Staff, { res } = httpContext) {
-    const business = await staff.business();
-    const availability = await staff.availability();
-    const services = await staff.services();
-
-    return res.inertia("Staff/Show", {
+  @Method()
+  async show(staff: Staff) {
+    return inertia("Staff/Show", {
       staff,
-      business,
-      availability,
-      services,
     });
   }
 
   /**
    * Show the form for editing the specified staff member
    */
-  async edit(staff: Staff, { res } = httpContext) {
-    const business = await staff.business();
-    const services = await staff.services();
-
-    return res.inertia("Staff/Edit", {
+  @Method()
+  async edit(staff: Staff) {
+    return inertia("Staff/Edit", {
       staff,
-      business,
-      services,
     });
   }
 
   /**
    * Update the specified staff member
    */
-  async update(
-    staff: Staff,
-    request: StaffRequest,
-    { req, res } = httpContext,
-  ) {
-    await request.rules();
-    const validated = req.body;
+  @Method()
+  async update(staff: Staff, request: StaffRequest) {
+    const updated = await request.save();
 
-    await staff.update(validated);
-
-    return res
-      .with("success", "Staff member updated successfully!")
-      .inertiaRedirect(`/staff/${(staff as any).id}`);
+    return updated
+      ? response()
+          .with("success", "Staff member updated successfully!")
+          .redirect(303, `/staff`)
+      : response()
+          .with("error", "Failed to update staff member!")
+          .redirectBack();
   }
 
   /**
    * Remove the specified staff member
    */
-  async destroy(staff: Staff, { res } = httpContext) {
-    await staff.delete();
+  @Method()
+  async destroy(staff: Staff) {
+    const deleted = await staff.delete();
 
-    return res
-      .with("success", "Staff member deleted successfully!")
-      .inertiaRedirect("/staff");
+    return deleted
+      ? response()
+          .with("success", "Staff member deleted successfully!")
+          .redirect(303, `/staff`)
+      : response()
+          .with("error", "Failed to delete staff member!")
+          .redirectBack();
   }
 }
