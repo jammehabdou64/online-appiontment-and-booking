@@ -43,6 +43,9 @@ Route.group(() => {
     return redirect("/dashboard", 303); //res.inertia("Home");
   });
 
+  Route.get("/settings", (req, res, next) => {
+    return res.inertia("Settings/Index");
+  });
   // Businesses Routes
   Route.prefix("/businesses")
     .controller(BusinessesController)

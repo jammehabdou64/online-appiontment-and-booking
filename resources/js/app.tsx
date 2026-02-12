@@ -4,10 +4,8 @@ import { createInertiaApp } from "@inertiajs/react";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ThemeProvider } from "./Components/ThemeProvider";
 
-const appName = import.meta.env.VITE_APP_NAME || "JCC";
-
 createInertiaApp({
-  title: (title) => (title ? `${title} / ${appName}` : appName),
+  // title: (title) => (title ? `${title} / ${appName}` : appName),
   resolve: (name) =>
     resolvePageComponent(
       `./Pages/${name}.tsx`,
@@ -18,7 +16,7 @@ createInertiaApp({
     root.render(
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
         <App {...props} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
   },
   progress: {

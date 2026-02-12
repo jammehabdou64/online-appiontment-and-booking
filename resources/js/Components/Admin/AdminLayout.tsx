@@ -80,12 +80,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           {/* Logo/Brand */}
           <div className="flex h-16 items-center justify-between border-b border-[hsl(var(--sidebar-border))] px-6">
             <div>
-              <h2 className="text-xl font-bold text-[hsl(var(--sidebar-foreground))]">
+              {/* <h2 className="text-xl font-bold text-[hsl(var(--sidebar-foreground))]">
                 BookEasy
               </h2>
               <p className="text-xs text-[hsl(var(--sidebar-foreground))]/70">
                 Admin Panel
-              </p>
+              </p> */}
+              <img
+                src="/images/logo.png"
+                alt="Bookly"
+                width={180}
+                height={100}
+              />
             </div>
             <Button
               variant="ghost"

@@ -2,7 +2,13 @@ import React from "react";
 import { Head } from "@inertiajs/react";
 import { Building2, Calendar, Bell, Lock } from "lucide-react";
 import AdminLayout from "@/Components/Admin/AdminLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -194,25 +200,25 @@ export default function Settings() {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="opening-time">Opening Time</Label>
-                <Input
-                  id="opening-time"
-                  type="time"
-                  defaultValue="09:00"
-                />
+                <Input id="opening-time" type="time" defaultValue="09:00" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="closing-time">Closing Time</Label>
-                <Input
-                  id="closing-time"
-                  type="time"
-                  defaultValue="17:00"
-                />
+                <Input id="closing-time" type="time" defaultValue="17:00" />
               </div>
             </div>
             <div className="space-y-2">
               <Label>Business Days</Label>
               <div className="flex flex-wrap gap-2">
-                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                {[
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday",
+                ].map((day) => (
                   <Badge
                     key={day}
                     variant="secondary"
@@ -254,4 +260,3 @@ export default function Settings() {
     </AdminLayout>
   );
 }
-
