@@ -27,6 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
+import { Pagination } from "@/Components/ui/pagination";
 import { toast } from "sonner";
 
 interface Customer {
@@ -41,10 +42,17 @@ interface Customer {
 interface CustomersPageProps {
   customers: {
     data: Customer[];
-    current_page: number;
-    per_page: number;
-    total: number;
-    last_page: number;
+    meta?: {
+      current_page: number;
+      per_page: number;
+      total: number;
+      total_pages?: number;
+      last_page?: number;
+    };
+    current_page?: number;
+    per_page?: number;
+    total?: number;
+    last_page?: number;
   };
 }
 
@@ -188,7 +196,23 @@ export default function Customers({ customers }: CustomersPageProps) {
                   ))}
                 </TableBody>
               </Table>
-            ) : (
+            ) : null}
+            {customers?.data && customers.data.length > 0 && (
+              <div className="mt-4 border-t border-border pt-4">
+                <Pagination
+                  meta={
+                    customers.meta ?? {
+                      current_page: customers.current_page ?? 1,
+                      per_page: customers.per_page ?? 15,
+                      total: customers.total ?? 0,
+                      total_pages: customers.last_page ?? 1,
+                    }
+                  }
+                  basePath="/customers"
+                />
+              </div>
+            )}
+            {(!customers?.data || customers.data.length === 0) && (
               <div className="text-center py-12 text-muted-foreground">
                 <Mail className="h-16 w-16 mx-auto mb-4 opacity-50" />
                 <p className="text-lg font-medium mb-2">No customers yet</p>

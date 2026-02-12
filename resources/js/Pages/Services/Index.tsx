@@ -36,6 +36,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
+import { Pagination } from "@/Components/ui/pagination";
 import { toast } from "sonner";
 
 interface Service {
@@ -50,10 +51,17 @@ interface Service {
 interface ServicesPageProps {
   services: {
     data: Service[];
-    current_page: number;
-    per_page: number;
-    total: number;
-    last_page: number;
+    meta?: {
+      current_page: number;
+      per_page: number;
+      total: number;
+      total_pages?: number;
+      last_page?: number;
+    };
+    current_page?: number;
+    per_page?: number;
+    total?: number;
+    last_page?: number;
   };
 }
 
@@ -229,7 +237,23 @@ export default function Services({ services }: ServicesPageProps) {
                   ))}
                 </TableBody>
               </Table>
-            ) : (
+            ) : null}
+            {services?.data && services.data.length > 0 && (
+              <div className="mt-4 border-t border-border pt-4">
+                <Pagination
+                  meta={
+                    services.meta ?? {
+                      current_page: services.current_page ?? 1,
+                      per_page: services.per_page ?? 15,
+                      total: services.total ?? 0,
+                      total_pages: services.last_page ?? 1,
+                    }
+                  }
+                  basePath="/services"
+                />
+              </div>
+            )}
+            {(!services?.data || services.data.length === 0) && (
               <div className="text-center py-12 text-muted-foreground">
                 <Clock className="h-16 w-16 mx-auto mb-4 opacity-50" />
                 <p className="text-lg font-medium mb-2">No services yet</p>

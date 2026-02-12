@@ -12,31 +12,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { cn } from "@/lib/utils";
 
-// Stats - can be replaced with props from backend
-const stats = {
-  todayAppointments: 8,
-  todayConfirmed: 3,
-  todayPending: 2,
-  upcomingThisWeek: 24,
-  upcomingPercent: "+5%",
-  totalCustomers: 142,
-  customersPercent: "+8%",
-  customersNew: "12 new this month",
-  completionRate: 94,
-  completionPercent: "+2%",
-  completionLabel: "Last 30 days",
-};
-
-// Upcoming today - match design (initials, name, service, time, status)
-const upcomingToday = [
-  { id: 1, customer: "Emma Wilson", initials: "EW", service: "Hair Coloring", time: "9:00 AM", status: "confirmed" },
-  { id: 2, customer: "James Chen", initials: "JC", service: "Men's Haircut", time: "10:30 AM", status: "confirmed" },
-  { id: 3, customer: "Sophia Lee", initials: "SL", service: "Facial Treatment", time: "11:00 AM", status: "pending" },
-  { id: 4, customer: "Oliver Brown", initials: "OB", service: "Deep Tissue Massage", time: "1:00 PM", status: "confirmed" },
-  { id: 5, customer: "Ava Martinez", initials: "AM", service: "Manicure", time: "2:30 PM", status: "pending" },
-];
-
-// Weekly calendar: each item is { day, date, isToday, slots: { time: string, appointments: { service, color, start, end }[] } }
 const SERVICE_COLORS: Record<string, string> = {
   "Hair Coloring": "bg-rose-500/90",
   "Men's Haircut": "bg-emerald-600/90",
@@ -50,27 +25,52 @@ const SERVICE_COLORS: Record<string, string> = {
   "Spa Package": "bg-amber-800/90",
 };
 
-const WEEKLY_APPOINTMENTS = [
-  { dayIndex: 0, time: "9:00", service: "Hair Coloring", duration: 60 },
-  { dayIndex: 0, time: "11:00", service: "Facial", duration: 60 },
-  { dayIndex: 1, time: "10:00", service: "Deep Tissue Massage", duration: 60 },
-  { dayIndex: 1, time: "12:00", service: "Manicure", duration: 60 },
-  { dayIndex: 2, time: "9:30", service: "Men's Haircut", duration: 30 },
-  { dayIndex: 2, time: "13:30", service: "Beard Trim", duration: 30 },
-  { dayIndex: 3, time: "14:00", service: "Spa Package", duration: 60 },
-  { dayIndex: 4, time: "10:00", service: "Blowout", duration: 45 },
-  { dayIndex: 4, time: "13:30", service: "Pedicure", duration: 60 },
-  { dayIndex: 5, time: "11:00", service: "Haircut", duration: 60 },
-];
-
 const getServiceColor = (service: string) => SERVICE_COLORS[service] || "bg-primary/90";
+
+interface DashboardStats {
+  todayAppointments: number;
+  todayConfirmed: number;
+  todayPending: number;
+  upcomingThisWeek: number;
+  totalCustomers: number;
+  customersNewThisMonth: number;
+  completionRate: number;
+  todayAppointmentsPercent: string;
+  upcomingPercent: string;
+  customersPercent: string;
+  completionPercent: string;
+  completionLabel: string;
+}
+
+const defaultStats: DashboardStats = {
+  todayAppointments: 0,
+  todayConfirmed: 0,
+  todayPending: 0,
+  upcomingThisWeek: 0,
+  totalCustomers: 0,
+  customersNewThisMonth: 0,
+  completionRate: 0,
+  todayAppointmentsPercent: "+0%",
+  upcomingPercent: "+0%",
+  customersPercent: "+0%",
+  completionPercent: "+0%",
+  completionLabel: "Last 30 days",
+};
 
 export default function Dashboard() {
   const page = usePage();
+  const props = page.props as unknown as {
+    stats?: DashboardStats;
+    upcomingToday?: { id: number; customer: string; initials: string; service: string; time: string; status: string }[];
+    weeklyAppointments?: { dayIndex: number; time: string; service: string }[];
+  };
+  const stats = props.stats ?? defaultStats;
+  const upcomingToday = props.upcomingToday ?? [];
+  const weeklyAppointments = props.weeklyAppointments ?? [];
+
   const auth = (page.props as any)?.auth || {};
   const businessName = auth?.business?.name || "Serene Beauty";
 
-  // Build week: Mon 10 - Sun 16, with "today" = Wednesday (index 2)
   const weekStart = useMemo(() => {
     const d = new Date();
     const day = d.getDay();
@@ -106,7 +106,7 @@ export default function Dashboard() {
 
   const getBlockForCell = (dayIndex: number, timeLabel: string) => {
     const rowHour = parseRowHour(timeLabel);
-    return WEEKLY_APPOINTMENTS.filter((a) => {
+    return weeklyAppointments.filter((a) => {
       if (a.dayIndex !== dayIndex) return false;
       const [ah] = a.time.split(":");
       const apptHour = parseInt(ah, 10);
@@ -175,7 +175,7 @@ export default function Dashboard() {
               <div className="text-2xl font-bold">{stats.totalCustomers}</div>
               <p className="text-xs mt-1">
                 <span className="text-emerald-500">{stats.customersPercent}</span>{" "}
-                <span className="text-muted-foreground">{stats.customersNew}</span>
+                <span className="text-muted-foreground">{stats.customersNewThisMonth} new this month</span>
               </p>
             </CardContent>
           </Card>

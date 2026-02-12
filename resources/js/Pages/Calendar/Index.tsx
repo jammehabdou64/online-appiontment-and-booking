@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import AdminLayout from "@/Components/Admin/AdminLayout";
 import { Button } from "@/Components/ui/button";
@@ -22,40 +22,33 @@ const SERVICE_COLORS: Record<string, string> = {
 
 const getServiceColor = (service: string) => SERVICE_COLORS[service] ?? "bg-primary";
 
-// Mock: appointments per day for the visible month. Key = "YYYY-MM-DD", value = list of { service, count? }
-const MOCK_APPOINTMENTS: Record<string, { service: string; count?: number; badge?: number }[]> = {
-  "2026-02-03": [{ service: "Hair Coloring" }],
-  "2026-02-05": [{ service: "Facial" }, { service: "Massage" }],
-  "2026-02-09": [{ service: "Spa Package", badge: 9 }],
-  "2026-02-12": [{ service: "Haircut x3" }, { service: "Beard Trim" }],
-  "2026-02-14": [{ service: "Manicure" }],
-  "2026-02-15": [{ service: "Blowout" }],
-  "2026-02-18": [{ service: "Coloring x2" }],
-  "2026-02-20": [{ service: "Pedicure" }],
-  "2026-02-22": [{ service: "Facial" }],
-  "2026-02-25": [{ service: "Massage x2" }],
-  "2026-02-27": [{ service: "Haircut" }],
-};
-
 const DAY_HEADERS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+interface CalendarPageProps {
+  year: number;
+  month: number;
+  monthLabel: string;
+  appointmentsByDate: Record<string, { service: string; badge?: number }[]>;
+}
+
 export default function Calendar() {
-  const [viewDate, setViewDate] = React.useState(() => new Date());
+  const page = usePage();
+  const props = page.props as unknown as CalendarPageProps;
+  const now = useMemo(() => new Date(), []);
+  const year = props?.year ?? now.getFullYear();
+  const month = props?.month ?? now.getMonth() + 1;
+  const monthLabel = props?.monthLabel ?? now.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const appointmentsByDate = props?.appointmentsByDate ?? {};
 
-  const year = viewDate.getFullYear();
-  const month = viewDate.getMonth();
-  const monthLabel = viewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const daysInMonth = new Date(year, month, 0).getDate();
   const startOffset = firstDay;
   const totalCells = 6 * 7;
 
-  const today = useMemo(() => new Date(), []);
   const isToday = (day: number) =>
-    day === today.getDate() &&
-    month === today.getMonth() &&
-    year === today.getFullYear();
+    day === now.getDate() &&
+    month === now.getMonth() + 1 &&
+    year === now.getFullYear();
 
   const cells = useMemo(() => {
     const result: { day: number | null; dateKey: string | null }[] = [];
@@ -64,7 +57,7 @@ export default function Calendar() {
       if (dayNumber < 1 || dayNumber > daysInMonth) {
         result.push({ day: null, dateKey: null });
       } else {
-        const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(dayNumber).padStart(2, "0")}`;
+        const dateKey = `${year}-${String(month).padStart(2, "0")}-${String(dayNumber).padStart(2, "0")}`;
         result.push({ day: dayNumber, dateKey });
       }
     }
@@ -72,20 +65,29 @@ export default function Calendar() {
   }, [year, month, daysInMonth, startOffset, totalCells]);
 
   const prevMonth = () => {
-    setViewDate((d) => new Date(d.getFullYear(), d.getMonth() - 1));
+    if (month <= 1) {
+      router.get("/calendar", { year: year - 1, month: 12 });
+    } else {
+      router.get("/calendar", { year, month: month - 1 });
+    }
   };
+
   const nextMonth = () => {
-    setViewDate((d) => new Date(d.getFullYear(), d.getMonth() + 1));
+    if (month >= 12) {
+      router.get("/calendar", { year: year + 1, month: 1 });
+    } else {
+      router.get("/calendar", { year, month: month + 1 });
+    }
   };
+
   const goToday = () => {
-    setViewDate(new Date());
+    router.get("/calendar");
   };
 
   return (
     <AdminLayout>
       <Head title="Calendar" />
       <div className="space-y-6">
-        {/* Controls: month title left, arrows + Today right */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold text-foreground">{monthLabel}</h1>
           <div className="flex items-center gap-2">
@@ -116,9 +118,7 @@ export default function Calendar() {
           </div>
         </div>
 
-        {/* Month grid */}
         <div className="rounded-lg border border-border bg-muted/30 overflow-hidden">
-          {/* Day headers */}
           <div className="grid grid-cols-7 border-b border-border bg-muted/50">
             {DAY_HEADERS.map((day) => (
               <div
@@ -129,7 +129,6 @@ export default function Calendar() {
               </div>
             ))}
           </div>
-          {/* 6 rows of days */}
           <div className="grid grid-cols-7">
             {cells.map((cell, index) => (
               <div
@@ -155,7 +154,7 @@ export default function Calendar() {
                       </span>
                     </div>
                     <div className="flex-1 flex flex-col gap-1 overflow-hidden">
-                      {(MOCK_APPOINTMENTS[cell.dateKey!] ?? []).map((apt, i) => (
+                      {(appointmentsByDate[cell.dateKey!] ?? []).map((apt, i) => (
                         <div
                           key={i}
                           className={cn(

@@ -30,6 +30,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
+import { Pagination } from "@/Components/ui/pagination";
 import { toast } from "sonner";
 
 interface Staff {
@@ -46,10 +47,17 @@ interface Staff {
 interface StaffPageProps {
   staff: {
     data: Staff[];
-    current_page: number;
-    per_page: number;
-    total: number;
-    last_page: number;
+    meta?: {
+      current_page: number;
+      per_page: number;
+      total: number;
+      total_pages?: number;
+      last_page?: number;
+    };
+    current_page?: number;
+    per_page?: number;
+    total?: number;
+    last_page?: number;
   };
 }
 
@@ -218,7 +226,23 @@ export default function StaffList({ staff }: StaffPageProps) {
                   ))}
                 </TableBody>
               </Table>
-            ) : (
+            ) : null}
+            {staff?.data && staff.data.length > 0 && (
+              <div className="mt-4 border-t border-border pt-4">
+                <Pagination
+                  meta={
+                    staff.meta ?? {
+                      current_page: staff.current_page ?? 1,
+                      per_page: staff.per_page ?? 15,
+                      total: staff.total ?? 0,
+                      total_pages: staff.last_page ?? 1,
+                    }
+                  }
+                  basePath="/staff"
+                />
+              </div>
+            )}
+            {(!staff?.data || staff.data.length === 0) && (
               <div className="text-center py-12 text-muted-foreground">
                 <UserCheck className="h-16 w-16 mx-auto mb-4 opacity-50" />
                 <p className="text-lg font-medium mb-2">No staff members yet</p>

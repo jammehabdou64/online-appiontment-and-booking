@@ -28,6 +28,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
+import { Pagination } from "@/Components/ui/pagination";
 
 interface Appointment {
   id: number;
@@ -53,9 +54,21 @@ interface Appointment {
 interface Props {
   appointments: {
     data: Appointment[];
-    meta?: any;
+    meta?: {
+      current_page: number;
+      per_page: number;
+      total: number;
+      total_pages?: number;
+      last_page?: number;
+    };
   };
-  filters?: any;
+  filters?: {
+    staff_id?: string;
+    customer_id?: string;
+    status?: string;
+    start_date?: string;
+    end_date?: string;
+  };
 }
 
 const getStatusBadge = (status: string) => {
@@ -78,7 +91,7 @@ export default function Appointments({ appointments, filters }: Props) {
     null,
   );
 
-  const appointmentList = appointments?.data || appointments || [];
+  const appointmentList: Appointment[] = appointments?.data ?? [];
 
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
@@ -262,7 +275,23 @@ export default function Appointments({ appointments, filters }: Props) {
                   })}
                 </TableBody>
               </Table>
-            ) : (
+            ) : null}
+            {appointmentList.length > 0 && appointments?.meta && (
+              <div className="mt-4 border-t border-border pt-4">
+                <Pagination
+                  meta={appointments.meta}
+                  basePath="/appointments"
+                  queryParams={{
+                    staff_id: filters?.staff_id,
+                    customer_id: filters?.customer_id,
+                    status: filters?.status,
+                    start_date: filters?.start_date,
+                    end_date: filters?.end_date,
+                  }}
+                />
+              </div>
+            )}
+            {appointmentList.length === 0 && (
               <div className="text-center py-12 text-muted-foreground">
                 <Calendar className="h-16 w-16 mx-auto mb-4 opacity-50" />
                 <p className="text-lg font-medium mb-2">No appointments yet</p>

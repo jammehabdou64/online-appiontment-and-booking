@@ -424,34 +424,34 @@ import { SendWelcomeEmail } from "@/Jobs/SendWelcomeEmail";
 async function registerUser(data: any) {
   // Hash password
   const hashedPassword = await bcrypt(data.password);
-  
+
   // Create user
   const user = await User.create({
     ...data,
     password: hashedPassword,
   });
-  
+
   // Dispatch event
   await emit(new UserRegistered(user));
-  
+
   // Dispatch job
   await dispatch(new SendWelcomeEmail(user));
-  
+
   // Generate JWT token
   const token = jwtSign({ id: user.id, email: user.email });
-  
+
   // Get storage path
   const avatarPath = rootPath(`storage/app/avatars/${user.id}`);
-  
+
   // Use tap to log and perform side effects
   await tap(user, async (u) => {
     console.log("User created:", u.id);
     await Cache.put(`user:${u.id}`, u);
   });
-  
+
   // Check authorization
   const canManageUsers = await can(user, "manage-users");
-  
+
   return { user, token, canManageUsers };
 }
 ```
@@ -646,12 +646,12 @@ export class AppServiceProvider extends ServiceProvider {
     this.app.singleton(UserService.name, () => {
       return new UserService();
     });
-    
+
     // Bind as instance (new instance each time) using class.name
     this.app.bind(EmailService.name, () => {
       return new EmailService();
     });
-    
+
     // You can also bind directly without a factory function
     this.app.singleton(UserService.name, UserService);
     this.app.bind(EmailService.name, EmailService);
@@ -660,6 +660,7 @@ export class AppServiceProvider extends ServiceProvider {
 ```
 
 **Why use `class.name`?**
+
 - More maintainable: If you rename the class, TypeScript will catch errors
 - Less error-prone: No typos in string literals
 - Better IDE support: Autocomplete and refactoring work better
@@ -722,7 +723,7 @@ export class AppServiceProvider extends ServiceProvider {
     this.app.singleton(UserService.name, () => {
       return new UserService();
     });
-    
+
     // Or bind directly
     this.app.bind(EmailService.name, EmailService);
   }
@@ -1328,7 +1329,7 @@ return res.redirect(303, "/home");
 return res.redirectBack();
 
 // Redirect with flash message
-return res.with("success","User created!").redirect("/users");
+return res.with("success", "User created!").redirect("/users");
 ```
 
 ### View Responses
@@ -1401,12 +1402,12 @@ res.status(500); // Internal Server Error
 
 ```typescript
 // Set flash message and redirect
-return res.with("success","User created successfully!").redirect("/users");
+return res.with("success", "User created successfully!").redirect("/users");
 
 // Different flash types
-res.with("error","Error occurred!").redirect("/users");
-res.with("warning","Warning message!").redirect("/users");
-res.with("info","Info message!").redirect("/users");
+res.with("error", "Error occurred!").redirect("/users");
+res.with("warning", "Warning message!").redirect("/users");
+res.with("info", "Info message!").redirect("/users");
 ```
 
 ### Complete Response Example
@@ -1423,9 +1424,7 @@ Route.post("/users", async (req, res) => {
     });
   }
 
-  return res
-    .with("success","User created successfully!")
-    .redirect("/users");
+  return res.with("success", "User created successfully!").redirect("/users");
 });
 ```
 
@@ -1438,6 +1437,7 @@ JCC Express MVC uses Express's native request/response lifecycle. The framework 
 All standard Express `Request` and `Response` methods are available:
 
 **Request Methods:**
+
 - `req.body` - Request body
 - `req.query` - Query parameters
 - `req.params` - Route parameters
@@ -1448,6 +1448,7 @@ All standard Express `Request` and `Response` methods are available:
 - And all other Express request methods
 
 **Response Methods:**
+
 - `res.json()` - JSON response
 - `res.send()` - Send response
 - `res.render()` - Render view
@@ -1462,6 +1463,7 @@ All standard Express `Request` and `Response` methods are available:
 The framework adds the following methods to enhance the Express objects:
 
 **AppRequest Extensions:**
+
 - `req.validate()` - Validate request data
 - `req.validated()` - Get validated data
 - `req.input()` - Get input value
@@ -1488,6 +1490,7 @@ The framework adds the following methods to enhance the Express objects:
 - `req.fullUrl()` - Get full URL
 
 **AppResponse Extensions:**
+
 - `res.inertia()` - Render Inertia page
 - `res.inertiaRedirect()` - Inertia redirect
 - `res.redirectBack()` - Redirect to previous URL
@@ -1535,6 +1538,7 @@ Route.post("/users", async (req, res) => {
 ### Validation Rules Syntax
 
 Rules can be specified as:
+
 - **String format**: `"required|email|min:5"`
 - **Array format**: `["required", "email", "min:5"]`
 
@@ -1565,7 +1569,7 @@ await req.validate(
   {
     "name.required": "The name field is required.",
     "email.email": "That doesn't look like an email address.",
-  }
+  },
 );
 ```
 
@@ -1628,10 +1632,10 @@ class UserController {
     // You can access validated data via request.body or request.validated()
     const validated = await request.validated();
     const { name, email } = validated;
-    
+
     // Create the user...
     const user = await User.create(validated);
-    
+
     return res.json({ user });
   }
 }
@@ -1748,37 +1752,37 @@ These custom rules are automatically registered and available for use in your va
 await req.validate({
   // Basic
   name: "required|string|max:255",
-  
+
   // Email with uniqueness check (can use table name or model name)
   email: "required|email|unique:users,email",
-  
+
   // Password with confirmation
   password: "required|string|min:8",
   password_confirmation: "required|same:password",
-  
+
   // Numeric
   age: "required|integer|min:18|max:100",
   price: "required|decimal|min:0",
-  
+
   // Optional fields (nullable allows field to be empty)
   bio: "nullable|string|max:1000",
-  
+
   // Conditional validation (only validates if field is present)
   phone: "sometimes|phone",
-  
+
   // Arrays and objects
   tags: "required|array",
   metadata: "nullable|object",
-  
+
   // Special formats
   website: "nullable|url",
   phone_number: "nullable|phone",
   postal_code: "nullable|postal:US",
-  
+
   // File uploads
-  document: "required|file",        // Required file upload
-  avatar: "nullable|image",        // Optional image upload
-  resume: "sometimes|file",        // Only validate if file is provided
+  document: "required|file", // Required file upload
+  avatar: "nullable|image", // Optional image upload
+  resume: "sometimes|file", // Only validate if file is provided
 });
 ```
 
@@ -1791,8 +1795,8 @@ Here's a complete example of validating file uploads:
 Route.post("/profile", async (req, res) => {
   await req.validate({
     name: "required|string|max:255",
-    avatar: "nullable|image",        // Optional profile image
-    resume: "required|file",         // Required resume file
+    avatar: "nullable|image", // Optional profile image
+    resume: "required|file", // Required resume file
   });
 
   const validated = await req.validated();
@@ -1827,7 +1831,7 @@ await req.validate(
     "email.required": "We need your email address!",
     "email.email": "That doesn't look like an email address.",
     "password.min": "Password must be at least 8 characters.",
-  }
+  },
 );
 
 // In FormRequest
@@ -1865,10 +1869,10 @@ Validates that a field value is unique in the database.
 await req.validate({
   // Using model class name
   email: "required|email|unique:User,email",
-  
+
   // Using table name
   username: "required|string|unique:users,username",
-  
+
   // Column optional - uses field name as column
   email: "required|email|unique:users", // Checks users.email
   username: "required|string|unique:users", // Checks users.username
@@ -1952,18 +1956,14 @@ When validation fails, a `ValidationException` is thrown. The framework automati
 ```html
 <!-- In jsBlade templates -->
 @if(flash.validation_error)
-  <div class="errors">
-    @foreach(flash.validation_error as field => errors)
-      <div class="error">
-        <strong>{{ field }}:</strong>
-        @if(Array.isArray(errors))
-          {{ errors[0] }}
-        @else
-          {{ errors }}
-        @endif
-      </div>
-    @endforeach
+<div class="errors">
+  @foreach(flash.validation_error as field => errors)
+  <div class="error">
+    <strong>{{ field }}:</strong>
+    @if(Array.isArray(errors)) {{ errors[0] }} @else {{ errors }} @endif
   </div>
+  @endforeach
+</div>
 @endif
 
 <!-- Access old input -->
@@ -1990,6 +1990,7 @@ Route.post("/users", async (req, res) => {
 ```
 
 The framework automatically:
+
 - Returns a 422 JSON response for API requests with validation errors
 - Redirects back with flash errors for web requests
 
@@ -2147,11 +2148,13 @@ const email = await DB.table("users").where("name", "John").value("email");
 If you need to work with thousands of database records, consider using the `chunk` method. This method retrieves a small chunk of results at a time and feeds each chunk into a closure for processing:
 
 ```typescript
-await DB.table("users").orderBy("id").chunk(100, (users) => {
-  for (const user of users) {
-    // Process each chunk of 100 users
-  }
-});
+await DB.table("users")
+  .orderBy("id")
+  .chunk(100, (users) => {
+    for (const user of users) {
+      // Process each chunk of 100 users
+    }
+  });
 ```
 
 ## Select Statements
@@ -2173,9 +2176,7 @@ const users = await DB.table("users")
 You may use the query builder's `where` method to add "where" clauses to the query. The most basic call to `where` requires three arguments: the column, an operator, and the value:
 
 ```typescript
-const users = await DB.table("users")
-  .where("votes", "=", 100)
-  .get();
+const users = await DB.table("users").where("votes", "=", 100).get();
 ```
 
 For convenience, if you want to verify that a column is equal to a given value, you may pass the value directly as the second argument to the `where` method:
@@ -2228,9 +2229,7 @@ const id = await DB.table("users").insertGetId({
 In addition to inserting records into the database, the query builder can also update existing records using the `update` method. The `update` method, like the `insert` method, accepts an object containing the columns and values which should be updated:
 
 ```typescript
-await DB.table("users")
-  .where("id", 1)
-  .update({ votes: 1 });
+await DB.table("users").where("id", 1).update({ votes: 1 });
 ```
 
 ## Deletes
@@ -2553,7 +2552,9 @@ table.timestamp("updated_at").useCurrentOnUpdate();
 table.string("full_name").storedAs("CONCAT(first_name, ' ', last_name)");
 
 // Virtual as (virtual computed)
-table.string("initials").virtualAs("CONCAT(LEFT(first_name, 1), LEFT(last_name, 1))");
+table
+  .string("initials")
+  .virtualAs("CONCAT(LEFT(first_name, 1), LEFT(last_name, 1))");
 
 // Charset
 table.string("name").charset("utf8mb4");
@@ -2697,6 +2698,7 @@ bun artisanNode db:seed
 ```
 
 This command will:
+
 1. Find the `DatabaseSeeder` class in `database/seeders`
 2. Call its `run()` method
 3. Execute all seeders in the returned array
@@ -3040,7 +3042,9 @@ User.rightJoin("posts", "users.id", "=", "posts.user_id");
 
 // Join with callback
 User.join("posts", (join) => {
-  join.on("users.id", "=", "posts.user_id").orOn("users.id", "=", "posts.author_id");
+  join
+    .on("users.id", "=", "posts.user_id")
+    .orOn("users.id", "=", "posts.author_id");
 });
 
 // Join subquery
@@ -3172,8 +3176,6 @@ User.orWhereHas("posts", (q) => {
 // Eager load relationships
 User.with("posts").get();
 User.with(["posts", "comments"]).get();
-
-
 ```
 
 #### Increment & Decrement
@@ -3663,7 +3665,7 @@ export class UserObserver {
   async created(user: Model) {
     // Send welcome email
     await Mail.to(user.email).send(new WelcomeEmail(user));
-    
+
     // Create default profile
     await user.profile().create({
       bio: "",
@@ -3869,10 +3871,8 @@ Use `@extends()` to extend a layout:
 
 ```html
 <!-- resources/views/pages/home.blade.html -->
-@extends('layouts.app')
-
-@section('content')
-    <h1>Home Page</h1>
+@extends('layouts.app') @section('content')
+<h1>Home Page</h1>
 @endsection
 ```
 
@@ -3881,14 +3881,10 @@ Use `@extends()` to extend a layout:
 Use `@section()` and `@endsection` to define content sections:
 
 ```html
-@section('title')
-    Page Title
-@endsection
-
-@section('content')
-    <div class="content">
-        <!-- Your content here -->
-    </div>
+@section('title') Page Title @endsection @section('content')
+<div class="content">
+  <!-- Your content here -->
+</div>
 @endsection
 ```
 
@@ -3900,22 +3896,20 @@ In your layout file, use `@yield()` to output section content:
 <!-- resources/views/layouts/app.blade.html -->
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>@yield('title')</title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <!-- Header content -->
+      <!-- Header content -->
     </header>
-    
-    <main>
-        @yield('content')
-    </main>
-    
+
+    <main>@yield('content')</main>
+
     <footer>
-        <!-- Footer content -->
+      <!-- Footer content -->
     </footer>
-</body>
+  </body>
 </html>
 ```
 
@@ -3935,7 +3929,7 @@ Use `@include()` to include other view files:
 @include('components.header')
 
 <div class="content">
-    <!-- Main content -->
+  <!-- Main content -->
 </div>
 
 @include('components.footer')
@@ -3947,9 +3941,9 @@ Use `@include()` to include other view files:
 
 ```html
 @if(user.isAdmin)
-    <p>You are an admin</p>
+<p>You are an admin</p>
 @else
-    <p>You are a regular user</p>
+<p>You are a regular user</p>
 @endif
 ```
 
@@ -3965,11 +3959,11 @@ Use `@include()` to include other view files:
 
 ```html
 @foreach(users as user)
-    <div class="user">
-        <h3>{{ user.name }}</h3>
-        <p>{{ user.email }}</p>
-        <p>Index: {{ user.loopIndex }}</p>
-    </div>
+<div class="user">
+  <h3>{{ user.name }}</h3>
+  <p>{{ user.email }}</p>
+  <p>Index: {{ user.loopIndex }}</p>
+</div>
 @endforeach
 ```
 
@@ -3983,8 +3977,8 @@ Display content only for authenticated users:
 
 ```html
 @auth
-    <p>Welcome, {{ Auth.name }}!</p>
-    <a href="/logout">Logout</a>
+<p>Welcome, {{ Auth.name }}!</p>
+<a href="/logout">Logout</a>
 @endauth
 ```
 
@@ -3992,7 +3986,7 @@ Check for specific roles:
 
 ```html
 @auth('admin')
-    <p>Admin Panel</p>
+<p>Admin Panel</p>
 @endauth
 ```
 
@@ -4002,8 +3996,8 @@ Display content only for guests (unauthenticated users):
 
 ```html
 @guest
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
+<a href="/login">Login</a>
+<a href="/register">Register</a>
 @endguest
 ```
 
@@ -4012,8 +4006,7 @@ Display content only for guests (unauthenticated users):
 Use the `assets()` helper to include CSS and JavaScript files:
 
 ```html
-{{ assets('css/app') }}
-{{ assets('js/app') }}
+{{ assets('css/app') }} {{ assets('js/app') }}
 ```
 
 This will automatically generate the correct `<link>` or `<script>` tags.
@@ -4046,13 +4039,13 @@ Use `@inertia` in your root layout to output the Inertia app container:
 <!-- resources/views/app.blade.html -->
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>My App</title>
     @vite(['resources/js/app.js', 'resources/css/app.css'])
-</head>
-<body>
+  </head>
+  <body>
     @inertia
-</body>
+  </body>
 </html>
 ```
 
@@ -4064,61 +4057,45 @@ This will output: `<div id="app" data-page='...'></div>` with the Inertia page d
 <!-- resources/views/layouts/app.blade.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title', 'My App')</title>
     @vite(['resources/css/app.css'])
-</head>
-<body>
-    <header>
-        @include('components.navbar')
-    </header>
+  </head>
+  <body>
+    <header>@include('components.navbar')</header>
 
-    <main>
-        @yield('content')
-    </main>
+    <main>@yield('content')</main>
 
-    <footer>
-        @include('components.footer')
-    </footer>
+    <footer>@include('components.footer')</footer>
 
     @vite(['resources/js/app.js'])
-</body>
+  </body>
 </html>
 ```
 
 ```html
 <!-- resources/views/pages/dashboard.blade.html -->
-@extends('layouts.app')
+@extends('layouts.app') @section('title') Dashboard @endsection
+@section('content') @auth
+<h1>Welcome, {{ Auth.name }}!</h1>
 
-@section('title')
-    Dashboard
-@endsection
+@if(Auth.role === 'admin')
+<div class="admin-panel">
+  <h2>Admin Panel</h2>
+</div>
+@endif
 
-@section('content')
-    @auth
-        <h1>Welcome, {{ Auth.name }}!</h1>
-        
-        @if(Auth.role === 'admin')
-            <div class="admin-panel">
-                <h2>Admin Panel</h2>
-            </div>
-        @endif
-
-        <h2>Users</h2>
-        @foreach(users as user)
-            <div class="user-card">
-                <h3>{{ user.name }}</h3>
-                <p>{{ user.email }}</p>
-            </div>
-        @endforeach
-    @endauth
-
-    @guest
-        <p>Please login to view the dashboard.</p>
-    @endguest
-@endsection
+<h2>Users</h2>
+@foreach(users as user)
+<div class="user-card">
+  <h3>{{ user.name }}</h3>
+  <p>{{ user.email }}</p>
+</div>
+@endforeach @endauth @guest
+<p>Please login to view the dashboard.</p>
+@endguest @endsection
 ```
 
 ## Inertia.js Integration
@@ -4172,7 +4149,7 @@ import { Route } from "jcc-express-mvc/Core";
 
 Route.get("/users", async (req, res) => {
   const users = await User.all();
-  
+
   return res.inertia("Users/Index", {
     users: users,
   });
@@ -4186,7 +4163,7 @@ Use `res.inertiaRedirect()` for redirects that work with Inertia:
 ```typescript
 Route.post("/users", async (req, res) => {
   const user = await User.create(req.body);
-  
+
   return res.inertiaRedirect("/users");
 });
 ```
@@ -4208,7 +4185,7 @@ inertia({
       },
     };
   },
-})
+});
 ```
 
 These props are automatically merged with page-specific props when you call `res.inertia()`.
@@ -4223,7 +4200,7 @@ Inertia supports partial reloads. The client can request only specific props:
 Route.get("/users", async (req, res) => {
   const users = await User.all();
   const count = await User.count();
-  
+
   return res.inertia("Users/Index", {
     users: users,
     count: count,
@@ -4246,7 +4223,7 @@ inertia({
     enabled: true,
     // SSR server URL (default: http://localhost:13714)
   },
-})
+});
 ```
 
 The SSR server should be running separately and will receive render requests at `http://localhost:13714/render` by default.
@@ -4315,7 +4292,7 @@ export class UserController {
   @Method()
   async index(req: any, res: any) {
     const users = await User.all();
-    
+
     return res.inertia("Users/Index", {
       users: users,
     });
@@ -4324,9 +4301,9 @@ export class UserController {
   @Method()
   async store(req: any, res: any) {
     const user = await User.create(req.body);
-    
+
     req.flash("success", "User created successfully!");
-    
+
     return res.inertiaRedirect("/users");
   }
 }
@@ -4358,14 +4335,13 @@ The root view should contain the `@inertia` directive:
 <!-- resources/views/app.blade.html -->
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>My App</title>
     @vite(['resources/css/app.css'])
-</head>
-<body>
-    @inertia
-    @vite(['resources/js/app.js'])
-</body>
+  </head>
+  <body>
+    @inertia @vite(['resources/js/app.js'])
+  </body>
 </html>
 ```
 
@@ -4472,6 +4448,7 @@ Route.middleware(["apiAuth"]).get("/api/user", (req, res) => {
 ```
 
 The middleware will look for the token in:
+
 1. `Authorization: Bearer {token}` header
 2. `auth_token` cookie
 
@@ -4649,12 +4626,12 @@ The framework provides global `can()` and `authorize()` helpers that you can use
 // In route closures, TypeScript automatically infers types - no imports needed
 Route.get("/users/:id", async (req, res) => {
   const user = await User.find(req.params.id);
-  
+
   // Check if current user can view this user
   if (await can(req.user, "view", user)) {
     return res.json({ user });
   }
-  
+
   return res.status(403).json({ message: "Unauthorized" });
 });
 ```
@@ -4666,14 +4643,14 @@ The `authorize()` helper will automatically throw an error if the user is not au
 ```typescript
 Route.put("/users/:id", async ({ req, res }) => {
   const user = await User.find(req.params.id);
-  
+
   // This will throw an error if unauthorized
   await authorize(req.user, "update", user);
-  
+
   // If we get here, user is authorized
   user.name = req.body.name;
   await user.save();
-  
+
   return res.json({ user });
 });
 ```
@@ -4689,24 +4666,24 @@ import { User } from "@/Models/User";
 class UserController {
   async show({ req, res } = httpContext) {
     const user = await User.find(req.params.id);
-    
+
     // Check authorization
     if (!(await can(req.user, "view", user))) {
       return res.status(403).json({ message: "Unauthorized" });
     }
-    
+
     return res.json({ user });
   }
 
   async update({ req, res } = httpContext) {
     const user = await User.find(req.params.id);
-    
+
     // Authorize (throws if denied)
     await authorize(req.user, "update", user);
-    
+
     user.name = req.body.name;
     await user.save();
-    
+
     return res.json({ user });
   }
 }
@@ -4778,20 +4755,24 @@ import { AuthorizeMiddleware } from "jcc-express-mvc/Authorization/AuthorizeMidd
 import { User } from "@/Models/User";
 
 // Using middleware with model class
-Route.middleware(["auth", AuthorizeMiddleware.authorize("update", User)])
-  .put("/users/:id", async ({ req, res }) => {
+Route.middleware(["auth", AuthorizeMiddleware.authorize("update", User)]).put(
+  "/users/:id",
+  async ({ req, res }) => {
     const user = await User.find(req.params.id);
     user.name = req.body.name;
     await user.save();
     return res.json({ user });
-  });
+  },
+);
 
 // Using middleware without model (for gates)
-Route.middleware(["auth", AuthorizeMiddleware.authorize("manage-users")])
-  .get("/admin/users", async ({ req, res }) => {
+Route.middleware(["auth", AuthorizeMiddleware.authorize("manage-users")]).get(
+  "/admin/users",
+  async ({ req, res }) => {
     const users = await User.all();
     return res.json({ users });
-  });
+  },
+);
 ```
 
 ### Registering Middleware Alias
@@ -4818,14 +4799,16 @@ export class Kernel {
 Then use it in your routes:
 
 ```typescript
-Route.middleware(["auth", "can-update-user"])
-  .put("/users/:id", async ({ req, res }) => {
+Route.middleware(["auth", "can-update-user"]).put(
+  "/users/:id",
+  async ({ req, res }) => {
     // User is already authorized
     const user = await User.find(req.params.id);
     user.name = req.body.name;
     await user.save();
     return res.json({ user });
-  });
+  },
+);
 ```
 
 ## Global Authorization Helpers
@@ -4901,7 +4884,7 @@ Route.middleware(["auth"])
   .post("/users", async ({ req, res }) => {
     // Check if user can create users
     await authorize(req.user, "create", User);
-    
+
     const user = await User.create(req.body);
     return res.json({ user });
   })
@@ -4913,7 +4896,7 @@ Route.middleware(["auth"])
   .put("/users/:id", async ({ req, res }) => {
     const user = await User.find(req.params.id);
     await authorize(req.user, "update", user);
-    
+
     user.name = req.body.name;
     await user.save();
     return res.json({ user });
@@ -4921,7 +4904,7 @@ Route.middleware(["auth"])
   .delete("/users/:id", async ({ req, res }) => {
     const user = await User.find(req.params.id);
     await authorize(req.user, "delete", user);
-    
+
     await user.delete();
     return res.json({ message: "User deleted" });
   });
@@ -4935,17 +4918,16 @@ import { AuthorizeMiddleware } from "jcc-express-mvc/Authorization/AuthorizeMidd
 import { User } from "@/Models/User";
 
 // Protect route with authorization middleware
-Route.middleware([
-  "auth",
-  AuthorizeMiddleware.authorize("update", User)
-])
-  .put("/users/:id", async ({ req, res }) => {
+Route.middleware(["auth", AuthorizeMiddleware.authorize("update", User)]).put(
+  "/users/:id",
+  async ({ req, res }) => {
     // User is already authorized by middleware
     const user = await User.find(req.params.id);
     user.name = req.body.name;
     await user.save();
     return res.json({ user });
-  });
+  },
+);
 ```
 
 ### Example 3: Conditional Authorization
@@ -4953,16 +4935,16 @@ Route.middleware([
 ```typescript
 Route.middleware(["auth"]).delete("/posts/:id", async ({ req, res }) => {
   const post = await Post.find(req.params.id);
-  
+
   // Check if user can delete this post
   const canDelete = await can(req.user, "delete", post);
-  
+
   if (!canDelete) {
-    return res.status(403).json({ 
-      message: "You don't have permission to delete this post" 
+    return res.status(403).json({
+      message: "You don't have permission to delete this post",
     });
   }
-  
+
   await post.delete();
   return res.json({ message: "Post deleted" });
 });
@@ -5104,10 +5086,10 @@ You can use `emit()` anywhere in your application - in controllers, services, jo
 async shipOrder(orderId: number) {
   const order = await Order.find(orderId);
   // ... shipping logic ...
-  
+
   // Dispatch event
   await emit(new OrderShipped(order));
-  
+
   return { message: "Order shipped" };
 }
 ```
@@ -5534,7 +5516,8 @@ await Mail.to("user@example.com").send({
     {
       filename: "report.xlsx",
       content: Buffer.from("..."), // Or use content for in-memory files
-      contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      contentType:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     },
   ],
 });
@@ -5548,14 +5531,14 @@ The `content` field should point to a jsBlade template file (without the `.blade
 <!-- resources/views/emails/welcome.blade.html -->
 <!DOCTYPE html>
 <html>
-<head>
-  <title>{{ subject }}</title>
-</head>
-<body>
-  <h1>Welcome!</h1>
-  <p>{{ message }}</p>
-  <p>Thank you for joining us.</p>
-</body>
+  <head>
+    <title>{{ subject }}</title>
+  </head>
+  <body>
+    <h1>Welcome!</h1>
+    <p>{{ message }}</p>
+    <p>Thank you for joining us.</p>
+  </body>
 </html>
 ```
 
@@ -5585,16 +5568,17 @@ The `send()` method accepts a `Mailer` object with the following structure:
 
 ```typescript
 interface Mailer {
-  sender: string;           // Sender name
-  email?: string;           // Sender email (optional, uses MAIL_FROM_ADDRESS if not provided)
-  subject: string;          // Email subject
-  message: string;          // Email message/content
-  content: string;          // Path to jsBlade template (without .blade.html)
-  attachments?: Array<{     // Optional attachments
+  sender: string; // Sender name
+  email?: string; // Sender email (optional, uses MAIL_FROM_ADDRESS if not provided)
+  subject: string; // Email subject
+  message: string; // Email message/content
+  content: string; // Path to jsBlade template (without .blade.html)
+  attachments?: Array<{
+    // Optional attachments
     filename: string;
-    path?: string;          // File path
+    path?: string; // File path
     content?: string | Buffer; // File content (for in-memory files)
-    contentType?: string;   // MIME type
+    contentType?: string; // MIME type
   }>;
 }
 ```
@@ -5727,7 +5711,7 @@ export class SocketIOServiceProvider extends SocketProvider {
 
         // Get users already in the room
         const usersInRoom = Array.from(
-          this.io.sockets.adapter.rooms.get(roomId) || []
+          this.io.sockets.adapter.rooms.get(roomId) || [],
         );
 
         // Notify existing users that a new user joined
@@ -5806,7 +5790,7 @@ this.io.to(socketId).emit("event-name", data);
 
 // Get all sockets in a room
 const socketsInRoom = Array.from(
-  this.io.sockets.adapter.rooms.get("room-id") || []
+  this.io.sockets.adapter.rooms.get("room-id") || [],
 );
 ```
 
@@ -5863,23 +5847,19 @@ import { Order } from "@/Models/Order";
 
 @Inject()
 class OrderController {
-
-   constructor(private event:Event){
-
-   }
+  constructor(private event: Event) {}
 
   @Method()
   async updateStatus(order: Order, status: string) {
     order.status = status;
     await order.save();
 
-   this.event.dispatch(new OrderStatusChanged(order))
+    this.event.dispatch(new OrderStatusChanged(order));
 
-   //OR
+    //OR
 
-   // Dispatch broadcast event using global emit()
+    // Dispatch broadcast event using global emit()
     await emit(new OrderStatusChanged(order));
-
 
     return { message: "Order status updated" };
   }
@@ -5926,7 +5906,7 @@ boot(): void {
       // Authorize and return user data
       // You can access the authenticated user from socket.data or req
       const user = socket.data.user; // Assuming user is set during authentication
-      
+
       if (user) {
         callback(null, {
           id: user.id,
@@ -5949,7 +5929,6 @@ ArtisanNode is the command-line interface included with JCC Express MVC. It prov
 ## Introduction
 
 ArtisanNode is the command-line interface included with JCC Express MVC. It provides a number of helpful commands that can assist you while building your application.
-
 
 ## Available Commands
 
@@ -6035,6 +6014,7 @@ bun artisanNode tinker
 ```
 
 You'll see a welcome message showing:
+
 - Application bootstrap status
 - Available database and cache facades
 - All loaded models from your `app/Models` directory
@@ -6092,12 +6072,14 @@ services
 Tinker automatically loads and makes available:
 
 **Application Services:**
+
 - `app` - The application instance (service container)
 - `DB` - Database facade for querying
 - `Cache` - Cache facade
 - `resolve(name)` - Resolve services from container
 
 **Global Helpers:**
+
 - `emit(event)` - Dispatch events
 - `Str` - String utility class
 - `str()` - String helper function
@@ -6111,6 +6093,7 @@ Tinker automatically loads and makes available:
 All models from `app/Models` are automatically loaded and available by their class name (e.g., `User`, `Post`, `Message`).
 
 **Node.js Globals:**
+
 - `console` - Enhanced console with formatted output
 - `require` - Module loader
 - `Buffer` - Buffer utility
@@ -6534,6 +6517,7 @@ npm run vite-build
 ```
 
 This command:
+
 - Bundles your React/Vue components
 - Creates optimized production assets
 - Generates SSR assets if server-side rendering is enabled
@@ -6547,6 +6531,7 @@ bun artisanNode build
 ```
 
 This command:
+
 - Compiles TypeScript to JavaScript using `tsc`
 - Prepares all assets for production
 - Outputs compiled code to the `./build` directory
@@ -6594,9 +6579,9 @@ import { inertia } from "../../jcc-express-mvc/Core/Inertia";
 export class Kernel {
   public middlewares = [
     // ... other middlewares
-    inertia({ 
-      rootView: "index",  // Your root view for SSR
-      ssr: true           // Enable SSR
+    inertia({
+      rootView: "index", // Your root view for SSR
+      ssr: true, // Enable SSR
     }),
   ];
 }

@@ -6,6 +6,8 @@ import { CustomersController } from "@Controllers/CustomersController";
 import { AppointmentsController } from "@Controllers/AppointmentsController";
 import { Auth } from "jcc-express-mvc/";
 import { Route } from "jcc-express-mvc/Core";
+import { DashboardController } from "@Controllers/DashboardController";
+import { CalendarController } from "@Controllers/CalendarController";
 
 // Public Routes
 Route.middleware("guest").get("/", (req, res) => {
@@ -28,16 +30,12 @@ Route.prefix("/auth").group((Route) => {
 Route.get("/logout", Auth.logout);
 
 // Authenticated Routes
-Route.group(() => {
+Route.middleware(["auth"]).group(() => {
   //.middleware(["auth"])
   // Dashboard
-  Route.get("/dashboard", (req, res) => {
-    return res.inertia("Dashboard/Index");
-  });
+  Route.get("/dashboard", [DashboardController, "index"]);
 
-  Route.get("/calendar", (req, res) => {
-    return res.inertia("Calendar/Index");
-  });
+  Route.get("/calendar", [CalendarController, "index"]);
 
   Route.get("/home", (req, res, next) => {
     return redirect("/dashboard", 303); //res.inertia("Home");
