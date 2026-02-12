@@ -1,5 +1,5 @@
-import React from "react"
-import { Calendar } from "lucide-react"
+import React from "react";
+import { Calendar } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -7,12 +7,7 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-col items-center gap-6 md:flex-row md:justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Calendar className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-heading text-lg font-bold text-foreground">
-              Bookly
-            </span>
+            <img src="/images/logo.png" alt="Bookly" width={180} height={100} />
           </div>
 
           <div className="flex items-center gap-6">
@@ -42,5 +37,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

@@ -36,7 +36,7 @@ const Register = () => {
       <Head title="Register" />
       <Header />
       <div className="container mx-auto flex items-center justify-center min-h-[calc(100vh-4rem)] py-12">
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md bg-background">
           <CardHeader>
             <CardTitle className="text-2xl">Create an account</CardTitle>
             <CardDescription>

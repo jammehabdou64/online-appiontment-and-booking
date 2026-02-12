@@ -1,5 +1,5 @@
 import React from "react";
-import {  Head } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 
 import Navbar from "@/Components/Header";
 import Hero from "@/Components/Home/hero";
@@ -9,21 +9,27 @@ import { HowItWorks } from "@/Components/Home/how-it-works";
 import EarlyAccess from "@/Components/Home/early-access";
 import CTA from "@/Components/Home/cta";
 import Footer from "@/Components/Shared/footer";
+import { cn } from "@/lib/utils";
 const Home = () => {
   return (
     <>
       <Head title="Welcome" />
-      <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main>
-        <Hero />
-        <ProblemSolution />
-        <Features />
-        <HowItWorks />
-        <EarlyAccess />
-        <CTA />
-      </main>
-      <Footer />
+      <div
+        className={cn(
+          "flex flex-col min-h-screen}",
+          "bg-[hsl(var(--sidebar-background))]",
+        )}
+      >
+        <Navbar />
+        <main>
+          <Hero />
+          <ProblemSolution />
+          <Features />
+          <HowItWorks />
+          <EarlyAccess />
+          <CTA />
+        </main>
+        <Footer />
       </div>
     </>
   );

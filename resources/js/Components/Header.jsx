@@ -1,40 +1,40 @@
-import React from "react"
+import React from "react";
 
-import { useState } from "react"
-import { Button } from "./ui/button"
-import { Menu, X } from "lucide-react"
-import { Link } from "@inertiajs/react"
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Menu, X } from "lucide-react";
+import { Link } from "@inertiajs/react";
 
 export default function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background backdrop-blur-md">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <img src="/images/logo.png" alt="Bookly" width={180} height={100} />
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <div className="hidden items-center gap-8 md:flex">
-          <a
+          <Link
             href="/#features"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             Features
-          </a>
-          <a
+          </Link>
+          <Link
             href="/#how-it-works"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             How It Works
-          </a>
-          <a
+          </Link>
+          <Link
             href="/#early-access"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             Early Access
-          </a>
+          </Link>
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
@@ -51,7 +51,11 @@ export default function Navbar() {
           className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground md:hidden"
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
       </nav>
 
@@ -81,7 +85,11 @@ export default function Navbar() {
               Early Access
             </a>
             <div className="flex flex-col gap-2 pt-2">
-              <Button variant="outline" size="sm" className="w-full bg-transparent">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full bg-transparent"
+              >
                 <Link href="/login">Log in</Link>
               </Button>
               <Button size="sm" className="w-full">
@@ -92,5 +100,5 @@ export default function Navbar() {
         </div>
       )}
     </header>
-  )
+  );
 }
