@@ -78,7 +78,9 @@ export default function StaffList({ staff }: StaffPageProps) {
         onSuccess: () => {
           setDeleteAlertOpen(false);
           setSelectedStaff(null);
-          toast.success(`Staff member "${selectedStaff.name}" deleted successfully`);
+          toast.success(
+            `Staff member "${selectedStaff.name}" deleted successfully`,
+          );
         },
         onError: () => {
           toast.error("Failed to delete staff member");
@@ -179,7 +181,7 @@ export default function StaffList({ staff }: StaffPageProps) {
                             onCheckedChange={(checked) => {
                               // Handle toggle
                               console.log(
-                                `Toggle staff ${member.id} to ${checked}`
+                                `Toggle staff ${member.id} to ${checked}`,
                               );
                             }}
                           />
@@ -237,4 +239,3 @@ export default function StaffList({ staff }: StaffPageProps) {
     </AdminLayout>
   );
 }
-

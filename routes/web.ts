@@ -93,6 +93,7 @@ Route.group(() => {
       Route.get("/{customer}", "show");
       Route.get("/{customer}/edit", "edit");
       Route.put("/{customer}", "update");
+      Route.patch("/{customer}", "update");
       Route.delete("/{customer}", "destroy");
     });
 

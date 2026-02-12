@@ -1,7 +1,5 @@
-import { httpContext } from "jcc-express-mvc";
 import { Inject, Method } from "jcc-express-mvc/Core/Dependency";
 import { Customer } from "@/Models/Customer";
-import { Business } from "@/Models/Business";
 import { CustomerRequest } from "@/Requests/CustomerRequest";
 
 @Inject()
@@ -55,6 +53,7 @@ export class CustomersController {
   /**
    * Show the form for editing the specified customer
    */
+  @Method()
   async edit(customer: Customer) {
     await customer.load(["business"]);
 
@@ -67,6 +66,7 @@ export class CustomersController {
   /**
    * Update the specified customer
    */
+  @Method()
   async update(request: CustomerRequest) {
     const save = await request.save();
 

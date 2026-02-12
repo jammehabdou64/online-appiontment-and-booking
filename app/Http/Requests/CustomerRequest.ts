@@ -2,6 +2,7 @@ import { FormRequest } from "jcc-express-mvc/Core/FormRequest";
 import { Request } from "jcc-express-mvc";
 import { Customer } from "@/Models/Customer";
 import { CustomerInterface } from "@/Models/Interface";
+import { DB } from "jcc-express-mvc/Eloquent";
 
 export class CustomerRequest extends FormRequest {
   constructor(req: Request) {
@@ -10,7 +11,6 @@ export class CustomerRequest extends FormRequest {
 
   async rules() {
     await this.validate({
-      business_id: ["required", "integer", "exists:businesses,id"],
       user_id: ["nullable", "integer", "exists:users,id"],
       first_name: ["required", "string", "max:255"],
       last_name: ["required", "string", "max:255"],
@@ -25,7 +25,7 @@ export class CustomerRequest extends FormRequest {
       ? ((await Customer.find(this.route("customer"))) as CustomerInterface)
       : (new Customer() as CustomerInterface);
 
-    customer.business_id = this.input("business_id");
+    customer.business_id = (await DB.table("businesses").first())?.id || 1; // Assuming a single business for simplicity
     customer.user_id = auth()?.id;
     customer.first_name = this.input("first_name");
     customer.last_name = this.input("last_name");
