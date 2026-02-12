@@ -9,22 +9,9 @@ export class StaffController {
   /**
    * Display a listing of staff
    */
-  @Method()
-  async index({ req, res, next } = httpContext) {
-    const businessId = req.query.business_id || req.params.business_id;
-
-    let query = Staff.query();
-
-    if (businessId) {
-      query = query.where("business_id", businessId);
-    }
-
-    const staff = await query.get();
-    const business = businessId ? await Business.find(businessId as string) : null;
-
-    return res.inertia("Staff/Index", {
-      staff,
-      business,
+  async index() {
+    return inertia("Staff/Index", {
+      staff: await Staff.paginate(request()),
     });
   }
 
@@ -33,7 +20,9 @@ export class StaffController {
    */
   async create({ req, res, next } = httpContext) {
     const businessId = req.query.business_id || req.params.business_id;
-    const business = businessId ? await Business.find(businessId as string) : null;
+    const business = businessId
+      ? await Business.find(businessId as string)
+      : null;
 
     return res.inertia("Staff/Create", {
       business,
@@ -90,7 +79,7 @@ export class StaffController {
   async update(
     staff: Staff,
     request: StaffRequest,
-    { req, res } = httpContext
+    { req, res } = httpContext,
   ) {
     await request.rules();
     const validated = req.body;
@@ -113,4 +102,3 @@ export class StaffController {
       .inertiaRedirect("/staff");
   }
 }
-

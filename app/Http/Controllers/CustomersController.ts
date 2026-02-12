@@ -9,107 +9,84 @@ export class CustomersController {
   /**
    * Display a listing of customers
    */
-  @Method()
-  async index({ req, res, next } = httpContext) {
-    const businessId = req.query.business_id || req.params.business_id;
 
-    let query = Customer.query();
-
-    if (businessId) {
-      query = query.where("business_id", businessId);
-    }
-
-    const customers = await query.get();
-    const business = businessId ? await Business.find(businessId as string) : null;
-
-    return res.inertia("Customers/Index", {
-      customers,
-      business,
+  async index() {
+    return inertia("Customers/Index", {
+      customers: await Customer.paginate(request()),
     });
   }
 
   /**
    * Show the form for creating a new customer
    */
-  async create({ req, res, next } = httpContext) {
-    const businessId = req.query.business_id || req.params.business_id;
-    const business = businessId ? await Business.find(businessId as string) : null;
-
-    return res.inertia("Customers/Create", {
-      business,
+  async create() {
+    return inertia("Customers/Create", {
+      business: [],
     });
   }
 
   /**
    * Store a newly created customer
    */
-  async store(
-    { req, res, next } = httpContext,
-    request: CustomerRequest
-  ) {
-    await request.rules();
-    const validated = req.body;
 
-    const customer = await Customer.create(validated);
+  @Method()
+  async store(request: CustomerRequest) {
+    const save = await request.save();
 
-    return res
-      .with("success", "Customer created successfully!")
-      .inertiaRedirect(`/customers/${(customer as any).id}`);
+    return save
+      ? response()
+          .with("success", "Customer created successfully!")
+          .redirect(303, `/customers`)
+      : response().with("error", "Failed to create customer!").redirectBack();
   }
 
   /**
    * Display the specified customer
    */
-  async show(customer: Customer, { res } = httpContext) {
-    const business = await customer.business();
-    const appointments = await customer.appointments();
+  @Method()
+  async show(customer: Customer) {
+    await customer.load(["business", "appointments"]);
 
-    return res.inertia("Customers/Show", {
+    return inertia("Customers/Show", {
       customer,
-      business,
-      appointments,
     });
   }
 
   /**
    * Show the form for editing the specified customer
    */
-  async edit(customer: Customer, { res } = httpContext) {
-    const business = await customer.business();
+  async edit(customer: Customer) {
+    await customer.load(["business"]);
 
-    return res.inertia("Customers/Edit", {
+    return inertia("Customers/Edit", {
       customer,
-      business,
+      // business,
     });
   }
 
   /**
    * Update the specified customer
    */
-  async update(
-    customer: Customer,
-    request: CustomerRequest,
-    { req, res } = httpContext
-  ) {
-    await request.rules();
-    const validated = req.body;
+  async update(request: CustomerRequest) {
+    const save = await request.save();
 
-    await customer.update(validated);
-
-    return res
-      .with("success", "Customer updated successfully!")
-      .inertiaRedirect(`/customers/${(customer as any).id}`);
+    return save
+      ? response()
+          .with("success", "Customer updated successfully!")
+          .redirect(303, `/customers`)
+      : response().with("error", "Failed to update customer!").redirectBack();
   }
 
   /**
    * Remove the specified customer
    */
-  async destroy(customer: Customer, { res } = httpContext) {
+
+  @Method()
+  async destroy(customer: Customer) {
     await customer.delete();
 
-    return res
+    return response()
       .with("success", "Customer deleted successfully!")
-      .inertiaRedirect("/customers");
+      .redirect(303, "/customers");
   }
 }
-
