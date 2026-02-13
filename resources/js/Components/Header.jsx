@@ -18,6 +18,18 @@ export default function Navbar() {
         {/* Desktop nav */}
         <div className="hidden items-center gap-8 md:flex">
           <Link
+            href="/explore/services"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Services
+          </Link>
+          <Link
+            href="/#featured-businesses"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Businesses
+          </Link>
+          <Link
             href="/#features"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
@@ -63,6 +75,20 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="border-t border-border bg-background px-6 pb-6 pt-4 md:hidden">
           <div className="flex flex-col gap-4">
+            <Link
+              href="/explore/services"
+              className="text-sm font-medium text-muted-foreground"
+              onClick={() => setMobileOpen(false)}
+            >
+              Services
+            </Link>
+            <Link
+              href="/#featured-businesses"
+              className="text-sm font-medium text-muted-foreground"
+              onClick={() => setMobileOpen(false)}
+            >
+              Businesses
+            </Link>
             <a
               href="/#features"
               className="text-sm font-medium text-muted-foreground"

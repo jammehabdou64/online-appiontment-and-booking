@@ -13,6 +13,7 @@ export class BusinessRequest extends FormRequest {
 
     await this.validate({
       name: ["required", "string", "max:255"],
+      description: ["nullable", "string", "max:1000"],
       primary_phone: isUpdate
         ? ["sometimes", "string", "max:20"]
         : ["required", "string", "max:20"],
@@ -41,6 +42,7 @@ export class BusinessRequest extends FormRequest {
     }
     business.name = this.input("name");
     business.slug = this.input("slug");
+    (business as BusinessInterface).description = this.input("description") ?? null;
     business.primary_phone = this.input("primary_phone");
     business.secondary_phone = this.input("secondary_phone");
     business.address = this.input("address");

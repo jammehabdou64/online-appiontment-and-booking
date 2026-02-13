@@ -16,6 +16,7 @@ import { toast } from "sonner";
 export default function BusinessForm() {
   const { data, setData, post, processing, errors } = useForm({
     name: "",
+    description: "",
     primary_phone: "",
     secondary_phone: "",
     address: "",
@@ -62,6 +63,20 @@ export default function BusinessForm() {
             />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <textarea
+              id="description"
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              placeholder="A short description of your business for the public listing"
+              value={data.description}
+              onChange={(e) => setData("description", e.target.value)}
+            />
+            {errors.description && (
+              <p className="text-sm text-destructive">{errors.description}</p>
             )}
           </div>
 

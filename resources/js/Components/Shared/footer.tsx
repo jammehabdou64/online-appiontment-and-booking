@@ -12,19 +12,31 @@ export default function Footer() {
 
           <div className="flex items-center gap-6">
             <a
-              href="#features"
+              href="/explore/services"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Services
+            </a>
+            <a
+              href="/#featured-businesses"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Businesses
+            </a>
+            <a
+              href="/#features"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               Features
             </a>
             <a
-              href="#how-it-works"
+              href="/#how-it-works"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               How It Works
             </a>
             <a
-              href="#early-access"
+              href="/#early-access"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               Early Access

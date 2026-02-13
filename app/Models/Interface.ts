@@ -54,6 +54,7 @@ export interface CustomerInterface extends Customer {
 export interface BusinessInterface extends Business {
   user_id?: string;
   name: string;
+  description?: string;
   address: string;
   phone: string;
   email: string;

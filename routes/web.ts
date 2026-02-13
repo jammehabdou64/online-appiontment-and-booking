@@ -4,15 +4,17 @@ import { ServicesController } from "@Controllers/ServicesController";
 import { StaffController } from "@Controllers/StaffController";
 import { CustomersController } from "@Controllers/CustomersController";
 import { AppointmentsController } from "@Controllers/AppointmentsController";
+import { HomeController } from "@Controllers/HomeController";
+import { ExploreController } from "@Controllers/ExploreController";
 import { Auth } from "jcc-express-mvc/";
 import { Route } from "jcc-express-mvc/Core";
 import { DashboardController } from "@Controllers/DashboardController";
 import { CalendarController } from "@Controllers/CalendarController";
 
 // Public Routes
-Route.middleware("guest").get("/", (req, res) => {
-  return res.inertia("Index");
-});
+Route.middleware("guest").get("/", [HomeController, "index"]);
+
+Route.get("/explore/services", [ExploreController, "services"]);
 
 Route.middleware("guest").get("/login", (req, res) =>
   res.inertia("Auth/Login"),
@@ -27,17 +29,16 @@ Route.prefix("/auth").group((Route) => {
   Route.post("/register", [AuthController, "register"]);
 });
 
+Route.get("/logout", Auth.logout);
 // Authenticated Routes (ensure user has a business except when creating one)
 Route.middleware(["auth", "ensureBusiness"]).group(() => {
-  //.middleware(["auth"])
-  Route.get("/logout", Auth.logout);
   // Dashboard
   Route.get("/dashboard", [DashboardController, "index"]);
 
   Route.get("/calendar", [CalendarController, "index"]);
 
   Route.get("/home", (req, res, next) => {
-    return redirect("/dashboard", 303); //res.inertia("Home");
+    return redirect("/dashboard", 303);
   });
 
   Route.get("/settings", (req, res, next) => {

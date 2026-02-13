@@ -11,6 +11,7 @@ export class Business extends Model {
     "user_id",
     "name",
     "slug",
+    "description",
     "primary_phone",
     "secondary_phone",
     "address",
