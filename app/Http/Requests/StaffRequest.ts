@@ -27,7 +27,7 @@ export class StaffRequest extends FormRequest {
       ? ((await Staff.find(this.route("staff"))) as StaffInterface)
       : (new Staff() as StaffInterface);
 
-    staff.business_id = (await DB.table("businesses").first())?.id || 1;
+    staff.business_id = auth().business.id;
     staff.user_id = auth()?.id;
     staff.first_name = this.input("first_name");
     staff.last_name = this.input("last_name");

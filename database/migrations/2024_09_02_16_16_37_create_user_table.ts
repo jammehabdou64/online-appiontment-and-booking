@@ -7,13 +7,13 @@ export class Migration {
       table.string("email").unique();
       table.string("password");
       table.string("remember_token").nullable();
-      table.timestamp('email_verified_at').nullable()
+      table.timestamp("email_verified_at").nullable();
       table.timestamps();
       table.softDeletes();
     });
   }
 
   down() {
-    return Schema.dropTable("users");
+    return Schema.dropIfExists("users");
   }
 }

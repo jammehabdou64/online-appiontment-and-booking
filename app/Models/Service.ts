@@ -1,9 +1,11 @@
-import { Model } from "jcc-express-mvc/Eloquent";
+import { Model, ScopedBy } from "jcc-express-mvc/Eloquent";
 import { Business } from "./Business";
 import { Appointment } from "./Appointment";
 import { Staff } from "./Staff";
 import { AttributeOptions } from "jcc-express-mvc/lib/Jcc-eloquent/lib/Types";
+import { BusinessScope } from "app/Scope/BusinessScope";
 
+@ScopedBy([BusinessScope])
 export class Service extends Model {
   protected fillable = [
     "business_id",
@@ -16,19 +18,17 @@ export class Service extends Model {
     "is_active",
   ];
 
-
-
   protected attributes(): Record<string, AttributeOptions> {
     return {
-      price:{
+      price: {
         get: (value: any) => {
-          return Number(value||0) / 100;
+          return Number(value || 0) / 100;
         },
         set: (value: any) => {
-          this._attributes.price = Number(value||0) * 100;
-        }
-      }
-    }
+          this._attributes.price = Number(value || 0) * 100;
+        },
+      },
+    };
   }
 
   // // Relationships
@@ -44,5 +44,3 @@ export class Service extends Model {
     return this.belongsToMany(Staff, "service_staff", "service_id", "staff_id");
   }
 }
-
-     

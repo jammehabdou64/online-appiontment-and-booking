@@ -1,8 +1,10 @@
-import { Model } from "jcc-express-mvc/Eloquent";
+import { Model, ScopedBy } from "jcc-express-mvc/Eloquent";
 import { Business } from "./Business";
 import { User } from "./User";
 import { Appointment } from "./Appointment";
+import { BusinessScope } from "app/Scope/BusinessScope";
 
+@ScopedBy([BusinessScope])
 export class Customer extends Model {
   protected fillable = [
     "business_id",
@@ -28,8 +30,7 @@ export class Customer extends Model {
   }
 
   // Helper: Get full name
-   getFullNameAttribute() {
+  getFullNameAttribute() {
     return `${this._attributes?.first_name} ${this._attributes?.last_name}`;
   }
 }
-

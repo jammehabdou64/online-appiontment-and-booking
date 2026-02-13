@@ -27,7 +27,7 @@ export class ServiceRequest extends FormRequest {
       ? ((await Service.find(this.route("service"))) as ServiceInterface)
       : (new Service() as ServiceInterface);
 
-    service.business_id = (await Business.first())?.id || 1;
+    service.business_id = auth().business.id;
     service.name = this.input("name");
     service.description = this.input("description");
     service.duration_minutes = this.input("duration_minutes");

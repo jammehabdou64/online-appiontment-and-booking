@@ -1,11 +1,13 @@
-import { Model } from "jcc-express-mvc/Eloquent";
+import { Model, ScopedBy } from "jcc-express-mvc/Eloquent";
 import { Business } from "./Business";
 import { Service } from "./Service";
 import { Staff } from "./Staff";
 import { Customer } from "./Customer";
+import { BusinessScope } from "app/Scope/BusinessScope";
 
+@ScopedBy([BusinessScope])
 export class Appointment extends Model {
-  static softDelete = true;
+  protected softDelete = true;
   protected fillable = [
     "business_id",
     "service_id",
@@ -55,10 +57,12 @@ export class Appointment extends Model {
   get canBeCancelled() {
     const now = new Date();
     const startTime = new Date(this._attributes.start_time);
-    const hoursUntilStart = (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursUntilStart =
+      (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
     return (
-      this._attributes.status === "pending" || this._attributes.status === "confirmed"
-    ) && hoursUntilStart > 24; // Can cancel if more than 24 hours away
+      (this._attributes.status === "pending" ||
+        this._attributes.status === "confirmed") &&
+      hoursUntilStart > 24
+    ); // Can cancel if more than 24 hours away
   }
 }
-

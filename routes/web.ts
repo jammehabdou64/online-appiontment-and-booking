@@ -27,11 +27,10 @@ Route.prefix("/auth").group((Route) => {
   Route.post("/register", [AuthController, "register"]);
 });
 
-Route.get("/logout", Auth.logout);
-
-// Authenticated Routes
-Route.middleware(["auth"]).group(() => {
+// Authenticated Routes (ensure user has a business except when creating one)
+Route.middleware(["auth", "ensureBusiness"]).group(() => {
   //.middleware(["auth"])
+  Route.get("/logout", Auth.logout);
   // Dashboard
   Route.get("/dashboard", [DashboardController, "index"]);
 

@@ -31,7 +31,7 @@ export class AppointmentRequest extends FormRequest {
         )) as AppointmentInterface)
       : (new Appointment() as AppointmentInterface);
 
-    appointment.business_id = (await (Business.first() as any)?.id) || 1;
+    appointment.business_id = auth().business.id;
     appointment.service_id = this.input("service_id");
     appointment.staff_id = this.input("staff_id");
     appointment.customer_id = this.input("customer_id");

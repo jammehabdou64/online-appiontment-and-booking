@@ -26,13 +26,14 @@ export class BusinessesController {
   /**
    * Store a newly created business
    */
+  @Method()
   async store(request: BusinessRequest) {
     const business = await request.save();
 
     return business
       ? response()
           .with("success", "Business created successfully!")
-          .redirect(303, `/businesses`)
+          .redirect(303, `/dashboard`)
       : response().with("error", "Failed to create business!").redirectBack();
   }
 

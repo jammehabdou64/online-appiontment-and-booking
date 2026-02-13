@@ -25,7 +25,7 @@ export class CustomerRequest extends FormRequest {
       ? ((await Customer.find(this.route("customer"))) as CustomerInterface)
       : (new Customer() as CustomerInterface);
 
-    customer.business_id = (await DB.table("businesses").first())?.id || 1; // Assuming a single business for simplicity
+    customer.business_id = auth().business.id;
     customer.user_id = auth()?.id;
     customer.first_name = this.input("first_name");
     customer.last_name = this.input("last_name");

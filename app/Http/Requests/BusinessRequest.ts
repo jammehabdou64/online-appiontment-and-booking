@@ -35,6 +35,10 @@ export class BusinessRequest extends FormRequest {
       ? ((await Business.find(this.route("business"))) as BusinessInterface)
       : (new Business() as BusinessInterface);
 
+    const req = (this as any).req as Request & { user?: { id?: string } };
+    if (!this.route("business") && req?.user?.id) {
+      (business as BusinessInterface).user_id = req.user.id;
+    }
     business.name = this.input("name");
     business.slug = this.input("slug");
     business.primary_phone = this.input("primary_phone");

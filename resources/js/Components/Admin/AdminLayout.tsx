@@ -21,6 +21,12 @@ import { Separator } from "@/Components/ui/separator";
 import { ThemeToggle } from "@/Components/ThemeToggle";
 import { Badge } from "@/Components/ui/badge";
 import { Toaster } from "@/Components/ui/sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu";
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
@@ -184,18 +190,42 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary"></span>
               </Button>
-              <div className="flex items-center gap-3 ml-2 pl-3 border-l border-border">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={auth?.avatar} />
-                  <AvatarFallback>{userInitials}</AvatarFallback>
-                </Avatar>
-                <div className="hidden md:block">
-                  <p className="text-sm font-medium text-foreground">
-                    {businessName}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{userEmail}</p>
-                </div>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex items-center gap-3 ml-2 pl-3 border-l border-border rounded-md hover:bg-accent/50 py-1 pr-1 -mr-1"
+                  >
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={auth?.avatar} />
+                      <AvatarFallback>{userInitials}</AvatarFallback>
+                    </Avatar>
+                    <div className="hidden md:block text-left">
+                      <p className="text-sm font-medium text-foreground">
+                        {businessName}
+                      </p>
+                      <p className="text-xs text-muted-foreground">{userEmail}</p>
+                    </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings" className="flex items-center gap-2 cursor-pointer">
+                      <Settings className="h-4 w-4" />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/logout"
+                      className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Log out
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>

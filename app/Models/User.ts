@@ -14,8 +14,9 @@ export class User extends Model {
     return this.hasMany(BusinessUser);
   }
 
-  businesses() {
-    return this.belongsToMany(Business, "business_users", "user_id", "business_id");
+  /** One-to-one: the business owned by this user (businesses.user_id) */
+  business() {
+    return this.hasOne(Business, "user_id");
   }
 
   staff() {

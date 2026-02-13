@@ -4,6 +4,7 @@ import flash from "connect-flash";
 import fileUpload from "express-fileupload";
 import { auth, guest } from "jcc-express-mvc";
 import { inertia } from "jcc-express-mvc/Core/Inertia";
+import { EnsureUserHasBusiness } from "./Middlewares/EnsureUserHasBusiness";
 
 export class Kernel {
   //
@@ -24,5 +25,6 @@ export class Kernel {
   public middlewareAliases = {
     auth,
     guest,
+    ensureBusiness: EnsureUserHasBusiness,
   };
 }

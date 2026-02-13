@@ -1,4 +1,5 @@
 import { Model } from "jcc-express-mvc/Eloquent";
+import { User } from "./User";
 import { Service } from "./Service";
 import { Staff } from "./Staff";
 import { Customer } from "./Customer";
@@ -7,6 +8,7 @@ import { BusinessUser } from "./BusinessUser";
 
 export class Business extends Model {
   protected fillable = [
+    "user_id",
     "name",
     "slug",
     "primary_phone",
@@ -22,6 +24,10 @@ export class Business extends Model {
   ];
 
   // Relationships
+  user() {
+    return this.belongsTo(User, "user_id");
+  }
+
   services() {
     return this.hasMany(Service);
   }

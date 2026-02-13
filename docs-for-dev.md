@@ -2297,7 +2297,7 @@ Schema.table("users", (table) => {
 });
 
 // Drop a table
-Schema.dropTable("users");
+Schema.dropIfExists("users");
 
 // Drop table (without IF EXISTS)
 Schema.drop("users");
